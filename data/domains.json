@@ -1,0 +1,26 @@
+[
+  {
+    "domain": "cmonodary.com",
+    "project": "(None)",
+    "registrar": "Spaceship, Inc.",
+    "expires": "2026-08-30",
+    "status": "Active",
+    "email": "you@example.com"
+  },
+  {
+    "domain": "frenchux.fr",
+    "project": "(None)",
+    "registrar": "Key-Systems GmbH",
+    "expires": "2026-03-12",
+    "status": "Active",
+    "email": "you@example.com"
+  },
+  {
+    "domain": "mondary.design",
+    "project": "(None)",
+    "registrar": "OVH SAS",
+    "expires": "2026-02-20",
+    "status": "Active",
+    "email": "you@example.com"
+  }
+]
