@@ -23,6 +23,9 @@ body {
 .topbar {
   background: #fff;
   border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 40;
 }
 .topbar-inner {
   max-width: 1200px;
@@ -74,7 +77,7 @@ body {
   padding: 10px 14px;
   border-radius: 12px;
   box-shadow: var(--shadow);
-  z-index: 25;
+  z-index: 10;
 }
 .toast.t180 { background: #0f172a; }
 .toast.t90 { background: #b45309; }
@@ -114,6 +117,15 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+}
+.thumb {
+  width: 84px;
+  height: 100%;
+  max-height: 64px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  margin-right: 0;
 }
 .registrar-logo {
   width: 18px;
@@ -323,9 +335,35 @@ thead th {
   font-weight: 600;
   border-bottom: 1px solid var(--line);
 }
+.sort-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.sort-btn::after {
+  content: "⇅";
+  margin-left: 6px;
+  font-size: 11px;
+  color: #94a3b8;
+}
+.sort-btn.asc::after { content: "↑"; }
+.sort-btn.desc::after { content: "↓"; }
 tbody td {
   padding: 14px 16px;
   border-bottom: 1px solid var(--line);
+}
+tbody tr {
+  height: 64px;
+}
+.domain-cell {
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 64px;
 }
 .muted { color: var(--muted); }
 .pill {

@@ -2,6 +2,7 @@ const input = document.querySelector("[data-search]");
 const rows = Array.from(document.querySelectorAll("tbody tr"));
 const daysFilter = document.querySelector("[data-days-filter]");
 const toast = document.querySelector("[data-expiring-toast]");
+const sortButtons = Array.from(document.querySelectorAll(".sort-btn"));
 const shortcuts = document.querySelector("[data-shortcuts]");
 const shortcutsClose = document.querySelector("[data-shortcuts-close]");
 
@@ -70,6 +71,57 @@ if (daysFilter) daysFilter.addEventListener("change", () => {
   updateToast();
 });
 updateToast();
+
+let sortState = { key: null, dir: "asc" };
+const sortKeyIndex = {
+  domain: 1,
+  registrar: 2,
+  expiration: 3,
+  days: 4,
+  status: 5,
+  email: 6,
+  project: 7,
+};
+
+const cellValue = (row, key) => {
+  const idx = sortKeyIndex[key];
+  const cell = row.querySelector(`td:nth-child(${idx})`);
+  if (!cell) return "";
+  if (key === "days") {
+    const val = parseInt(cell.textContent.trim(), 10);
+    return isNaN(val) ? Number.MAX_SAFE_INTEGER : val;
+  }
+  if (key === "expiration") {
+    const t = cell.textContent.trim();
+    return t === "" ? "9999-12-31" : t;
+  }
+  return cell.textContent.trim().toLowerCase();
+};
+
+const sortRows = (key, dir) => {
+  const tbody = document.querySelector("tbody");
+  if (!tbody) return;
+  const list = [...rows];
+  list.sort((a, b) => {
+    const va = cellValue(a, key);
+    const vb = cellValue(b, key);
+    if (va < vb) return dir === "asc" ? -1 : 1;
+    if (va > vb) return dir === "asc" ? 1 : -1;
+    return 0;
+  });
+  list.forEach((r) => tbody.appendChild(r));
+};
+
+sortButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const key = btn.getAttribute("data-sort");
+    const dir = sortState.key === key && sortState.dir === "asc" ? "desc" : "asc";
+    sortState = { key, dir };
+    sortButtons.forEach((b) => b.classList.remove("asc", "desc"));
+    btn.classList.add(dir);
+    sortRows(key, dir);
+  });
+});
 
 let selectedIndex = -1;
 const visibleRows = () => rows.filter((r) => r.style.display !== "none");

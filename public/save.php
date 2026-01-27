@@ -4,6 +4,7 @@ require_once __DIR__ . "/../app/lib/auth.php";
 require_once __DIR__ . "/../app/lib/db.php";
 require_once __DIR__ . "/../app/lib/rdap.php";
 require_once __DIR__ . "/../app/lib/logos.php";
+require_once __DIR__ . "/../app/lib/thumbs.php";
 date_default_timezone_set($config["timezone"]);
 require_login($config);
 
@@ -63,6 +64,9 @@ try {
     }
     if ($registrar !== "") {
         cache_registrar_logo($registrar);
+    }
+    if ($domain !== "") {
+        cache_site_thumbnail($domain);
     }
 } catch (PDOException $e) {
     // Silent fail: return to list

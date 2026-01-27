@@ -72,4 +72,5 @@ return [
     "shortcut_nav" => "Naviguer lignes",
     "shortcut_edit" => "Éditer la ligne",
     "shortcut_delete" => "Supprimer la ligne",
+    "filter_all" => "Tous",
 ];

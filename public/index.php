@@ -4,6 +4,7 @@ require_once __DIR__ . "/../app/lib/auth.php";
 require_once __DIR__ . "/../app/lib/db.php";
 require_once __DIR__ . "/../app/lib/i18n.php";
 require_once __DIR__ . "/../app/lib/logos.php";
+require_once __DIR__ . "/../app/lib/thumbs.php";
 date_default_timezone_set($config["timezone"]);
 require_login($config);
 
@@ -36,6 +37,12 @@ function registrar_logo_url($registrar) {
 }
 
 function registrar_site_url($registrar) {
+    $r = strtolower(trim((string)$registrar));
+    foreach (registrar_url_map() as $key => $url) {
+        if (strpos($r, $key) !== false) {
+            return $url;
+        }
+    }
     $domain = registrar_domain_for_logo((string)$registrar);
     if (!$domain) return null;
     return "https://www." . $domain . "/";
@@ -81,6 +88,7 @@ foreach ($domains as $d) {
           <input data-search type="text" placeholder="<?php echo t("search_placeholder"); ?>">
         </div>
         <select class="select" data-days-filter>
+          <option value="all"><?php echo t("filter_all"); ?></option>
           <option value="30" selected>&lt; 30j</option>
           <option value="60">&lt; 60j</option>
           <option value="90">&lt; 90j</option>
@@ -92,30 +100,34 @@ foreach ($domains as $d) {
       <div class="table-card">
         <table>
           <thead>
-                <tr tabindex="0"
-                    data-domain="<?php echo htmlspecialchars($d["domain"] ?? ""); ?>"
-                    data-project="<?php echo htmlspecialchars($d["project"] ?? ""); ?>"
-                    data-registrar="<?php echo htmlspecialchars($d["registrar"] ?? ""); ?>"
-                    data-expires="<?php echo htmlspecialchars($d["expires"] ?? ""); ?>"
-                    data-status="<?php echo htmlspecialchars($d["status"] ?? ""); ?>"
-                    data-email="<?php echo htmlspecialchars($d["email"] ?? ""); ?>"
-                >
-              <th><?php echo t("table_domain"); ?> (<?php echo $total; ?>)</th>
-              <th><?php echo t("table_registrar"); ?></th>
-              <th><?php echo t("table_expiration"); ?></th>
-              <th><?php echo t("table_days_left"); ?></th>
-              <th><?php echo t("table_status"); ?></th>
-              <th><?php echo t("table_email"); ?></th>
-              <th><?php echo t("table_project"); ?></th>
+            <tr>
+              <th><button class="sort-btn" data-sort="domain"><?php echo t("table_domain"); ?> (<?php echo $total; ?>)</button></th>
+              <th><button class="sort-btn" data-sort="registrar"><?php echo t("table_registrar"); ?></button></th>
+              <th><button class="sort-btn" data-sort="expiration"><?php echo t("table_expiration"); ?></button></th>
+              <th><button class="sort-btn" data-sort="days"><?php echo t("table_days_left"); ?></button></th>
+              <th><button class="sort-btn" data-sort="status"><?php echo t("table_status"); ?></button></th>
+              <th><button class="sort-btn" data-sort="email"><?php echo t("table_email"); ?></button></th>
+              <th><button class="sort-btn" data-sort="project"><?php echo t("table_project"); ?></button></th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             <?php foreach ($domains as $d): ?>
               <?php $days = days_until($d["expires"] ?? ""); ?>
-              <tr>
-                <td>
+              <tr tabindex="0"
+                  data-domain="<?php echo htmlspecialchars($d["domain"] ?? ""); ?>"
+                  data-project="<?php echo htmlspecialchars($d["project"] ?? ""); ?>"
+                  data-registrar="<?php echo htmlspecialchars($d["registrar"] ?? ""); ?>"
+                  data-expires="<?php echo htmlspecialchars($d["expires"] ?? ""); ?>"
+                  data-status="<?php echo htmlspecialchars($d["status"] ?? ""); ?>"
+                  data-email="<?php echo htmlspecialchars($d["email"] ?? ""); ?>"
+              >
+                <td class="domain-cell">
                   <?php $domain = htmlspecialchars($d["domain"] ?? ""); ?>
+                  <?php $thumb = cache_site_thumbnail($d["domain"] ?? ""); ?>
+                  <?php if ($thumb): ?>
+                    <img class="thumb" src="<?php echo htmlspecialchars($thumb); ?>" alt="">
+                  <?php endif; ?>
                   <a class="link" href="https://<?php echo $domain; ?>" target="_blank" rel="noopener noreferrer"><?php echo $domain; ?></a>
                 </td>
                 <td>
@@ -165,9 +177,7 @@ foreach ($domains as $d) {
         </table>
       </div>
 
-      <div class="footer">
-        Alert thresholds: <?php echo implode(", ", $config["alert_days"]); ?> days.
-      </div>
+      
     </div>
     <div class="toast" data-expiring-toast><?php echo t("expiring_badge", ["count" => $expiring, "threshold" => 30]); ?></div>
     <div class="drawer-backdrop" data-drawer-backdrop></div>

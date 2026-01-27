@@ -72,4 +72,5 @@ return [
     "shortcut_nav" => "Navigate rows",
     "shortcut_edit" => "Edit row",
     "shortcut_delete" => "Delete row",
+    "filter_all" => "All",
 ];

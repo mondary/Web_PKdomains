@@ -6,12 +6,25 @@ function registrar_domain_map(): array {
         "ovh sas" => "ovh.com",
         "spaceship" => "spaceship.com",
         "spaceship, inc." => "spaceship.com",
+        "squarespace" => "squarespace.com",
+        "porkbun" => "porkbun.com",
         "key-systems" => "key-systems.net",
         "key-systems gmbh" => "key-systems.net",
         "namecheap" => "namecheap.com",
         "godaddy" => "godaddy.com",
         "gandi" => "gandi.net",
         "cloudflare" => "cloudflare.com",
+    ];
+}
+
+function registrar_url_map(): array {
+    return [
+        "spaceship" => "https://www.spaceship.com/application/domain-list-application/",
+        "spaceship, inc." => "https://www.spaceship.com/application/domain-list-application/",
+        "squarespace" => "https://account.squarespace.com/domains",
+        "porkbun" => "https://porkbun.com/account/domainsSpeedy",
+        "ovh" => "https://manager.eu.ovhcloud.com/#/web-domains/domain",
+        "ovh sas" => "https://manager.eu.ovhcloud.com/#/web-domains/domain",
     ];
 }
 
