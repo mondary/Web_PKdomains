@@ -52,12 +52,13 @@ if (!function_exists("registrar_site_url")) {
 
 $today = new DateTime("today");
 $demo_items = [
-    ["domain" => "atelier-lys.fr", "project" => "Portfolio", "registrar" => "OVH", "days" => 142, "email" => "hello@atelier-lys.fr"],
-    ["domain" => "cafe-marin.fr", "project" => "Resto", "registrar" => "Gandi", "days" => 19, "email" => "contact@cafe-marin.fr"],
-    ["domain" => "studio-echo.com", "project" => "Agence", "registrar" => "Namecheap", "days" => 61, "email" => "team@studio-echo.com"],
-    ["domain" => "lavande.app", "project" => "SaaS", "registrar" => "Cloudflare", "days" => 6, "email" => "ops@lavande.app"],
-    ["domain" => "marble.dev", "project" => "Side project", "registrar" => "Porkbun", "days" => 210, "email" => "founder@marble.dev"],
-    ["domain" => "voyage-nordic.fr", "project" => "Blog", "registrar" => "Squarespace", "days" => 28, "email" => "contact@voyage-nordic.fr"],
+    ["display" => "jsoncrack.com", "project" => "SaaS", "registrar" => "Cloudflare", "days" => 92, "email" => "hello@jsoncrack.com", "thumb" => "/public/thumbs/jsoncrack-com.png", "favicon" => "/public/favicons/jsoncrack-com.ico"],
+    ["display" => "pocketbase.io", "project" => "Backend", "registrar" => "Cloudflare", "days" => 75, "email" => "hello@pocketbase.io", "thumb" => "/public/thumbs/pocketbase-io.png", "favicon" => "/public/favicons/pocketbase-io.ico"],
+    ["display" => "nhost.io", "project" => "BaaS", "registrar" => "Cloudflare", "days" => 104, "email" => "hello@nhost.io", "thumb" => "/public/thumbs/nhost-io.png", "favicon" => "/public/favicons/nhost-io.ico"],
+    ["display" => "doublememory.com", "project" => "Agency", "registrar" => "OVH", "days" => 34, "email" => "contact@doublememory.com", "thumb" => "/public/thumbs/doublememory-com.png", "favicon" => "/public/favicons/doublememory-com.ico"],
+    ["display" => "hub.pouark.com", "project" => "App", "registrar" => "OVH", "days" => 21, "email" => "hello@pouark.com", "thumb" => "/public/thumbs/hub-pouark-com.png", "favicon" => "/public/favicons/pouark-com.ico"],
+    ["display" => "mondary.me", "project" => "Portfolio", "registrar" => "OVH", "days" => 14, "email" => "contact@mondary.me", "thumb" => "/public/thumbs/mondary-me.png", "favicon" => "/public/assets/demo-favicon.svg"],
+    ["display" => "gomining.com", "project" => "Crypto", "registrar" => "Namecheap", "days" => 48, "email" => "support@gomining.com", "thumb" => "/public/thumbs/gomining-com.png", "favicon" => "/public/favicons/gomining-com.ico"],
 ];
 
 $domains = [];
@@ -91,7 +92,6 @@ foreach ($domains as $d) {
     <div class="topbar">
       <div class="topbar-inner">
         <div class="brand"><?php echo htmlspecialchars($config["site_name"]); ?></div>
-        <span class="badge demo-badge">Démo</span>
         <div class="spacer"></div>
         <button class="topbar-action" type="button" data-login-open>Se connecter</button>
       </div>
@@ -141,23 +141,15 @@ foreach ($domains as $d) {
               <tr>
                 <td class="domain-cell <?php echo $is_visible("domain") ? "" : "col-hidden"; ?>" data-col="domain" data-label="<?php echo t("table_domain"); ?>">
                   <span class="domain-media">
-                    <span class="thumb placeholder"></span>
-                    <span class="favicon placeholder"></span>
+                    <img class="thumb" src="<?php echo htmlspecialchars($d["thumb"] ?? "/public/assets/demo-thumb.svg"); ?>" alt="">
+                    <img class="favicon" src="<?php echo htmlspecialchars($d["favicon"] ?? "/public/assets/demo-favicon.svg"); ?>" alt="">
                   </span>
-                  <span class="link"><?php echo htmlspecialchars($d["domain"] ?? ""); ?></span>
+                  <span class="link"><?php echo htmlspecialchars($d["display"] ?? ""); ?></span>
                 </td>
                 <td class="<?php echo $is_visible("registrar") ? "" : "col-hidden"; ?>" data-col="registrar" data-label="<?php echo t("table_registrar"); ?>">
                   <div class="registrar">
-                    <?php $logo = registrar_logo_url($d["registrar"] ?? ""); ?>
-                    <?php $reg_url = registrar_site_url($d["registrar"] ?? ""); ?>
-                    <?php if ($logo): ?>
-                      <img class="registrar-logo" src="<?php echo htmlspecialchars($logo); ?>" alt="" referrerpolicy="no-referrer">
-                    <?php endif; ?>
-                    <?php if ($reg_url): ?>
-                      <a class="link" href="<?php echo htmlspecialchars($reg_url); ?>" target="_blank" rel="noopener noreferrer"><?php echo htmlspecialchars($d["registrar"] ?? ""); ?></a>
-                    <?php else: ?>
-                      <span><?php echo htmlspecialchars($d["registrar"] ?? ""); ?></span>
-                    <?php endif; ?>
+                    <img class="registrar-logo" src="/public/assets/demo-registrar.svg" alt="">
+                    <span><?php echo htmlspecialchars($d["registrar"] ?? ""); ?></span>
                   </div>
                 </td>
                 <td class="<?php echo $is_visible("expiration") ? "" : "col-hidden"; ?>" data-col="expiration" data-label="<?php echo t("table_expiration"); ?>"><?php echo htmlspecialchars($d["expires"] ?? ""); ?></td>
@@ -203,8 +195,6 @@ foreach ($domains as $d) {
         </div>
       </form>
     </div>
-
-    <button class="demo-cta" type="button" data-login-open>Se connecter</button>
 
     <script>
       (function () {

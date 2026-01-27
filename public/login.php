@@ -5,6 +5,10 @@ require_once __DIR__ . "/app/lib/i18n.php";
 date_default_timezone_set($config["timezone"]);
 
 session_start();
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    header("Location: /index.php");
+    exit;
+}
 if (isset($_SESSION["user_id"])) {
     header("Location: /index.php");
     exit;

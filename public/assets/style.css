@@ -248,6 +248,14 @@ body {
   overflow: visible;
   padding-right: 6px;
 }
+.demo-drawer .drawer-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
 .drawer-section {
   padding-right: 6px;
 }
@@ -559,24 +567,6 @@ tbody tr {
 .col-hidden {
   display: none;
 }
-.demo-cta {
-  position: fixed;
-  right: 20px;
-  bottom: 20px;
-  padding: 10px 14px;
-  border-radius: 999px;
-  border: none;
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  color: #fff;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: var(--shadow);
-  z-index: 5;
-}
-.demo-cta:hover {
-  filter: brightness(0.98);
-}
 
 @media (max-width: 1200px) {
   .container { padding: 0 20px; }
@@ -673,9 +663,4 @@ tbody tr {
   .domain-media { gap: 6px; }
   .thumb { width: 64px; }
   .auth-card { margin-top: 40px; }
-  .demo-cta {
-    left: 14px;
-    right: 14px;
-    width: calc(100% - 28px);
-  }
 }

@@ -45,13 +45,13 @@ function logo_slug(string $domain): string {
 
 function logo_paths(string $domain): array {
     $slug = logo_slug($domain);
-    $dir = __DIR__ . "/../../public/logos";
+    $dir = __DIR__ . "/../../logos";
     return [
         "dir" => $dir,
         "png" => $dir . "/" . $slug . ".png",
         "ico" => $dir . "/" . $slug . ".ico",
-        "public_png" => "logos/" . $slug . ".png",
-        "public_ico" => "logos/" . $slug . ".ico",
+        "public_png" => "public/logos/" . $slug . ".png",
+        "public_ico" => "public/logos/" . $slug . ".ico",
     ];
 }
 

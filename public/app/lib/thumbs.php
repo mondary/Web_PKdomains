@@ -6,11 +6,11 @@ function thumb_slug(string $domain): string {
 
 function thumb_paths(string $domain): array {
     $slug = thumb_slug($domain);
-    $dir = __DIR__ . "/../../public/thumbs";
+    $dir = __DIR__ . "/../../thumbs";
     return [
         "dir" => $dir,
         "png" => $dir . "/" . $slug . ".png",
-        "public_png" => "thumbs/" . $slug . ".png",
+        "public_png" => "public/thumbs/" . $slug . ".png",
     ];
 }
 
@@ -66,13 +66,13 @@ function cache_site_thumbnail(string $domain, bool $force = false): ?string {
 
 function favicon_paths(string $domain): array {
     $slug = thumb_slug($domain);
-    $dir = __DIR__ . "/../../public/favicons";
+    $dir = __DIR__ . "/../../favicons";
     return [
         "dir" => $dir,
         "ico" => $dir . "/" . $slug . ".ico",
         "png" => $dir . "/" . $slug . ".png",
-        "public_ico" => "favicons/" . $slug . ".ico",
-        "public_png" => "favicons/" . $slug . ".png",
+        "public_ico" => "public/favicons/" . $slug . ".ico",
+        "public_png" => "public/favicons/" . $slug . ".png",
     ];
 }
 
