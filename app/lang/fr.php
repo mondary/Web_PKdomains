@@ -8,7 +8,7 @@ return [
     "options" => "Options",
     "expiring_badge" => "{count} expirant ≤ {threshold}j",
     "header_hint" => "Alerts email sur l'expiration des domaines.",
-    "search_placeholder" => "Rechercher par domaine ou registrar",
+    "search_placeholder" => "Filtrer par domaine, registrar, date, etc.",
     "add_domain" => "Ajouter un domaine",
     "table_domain" => "Domaine",
     "table_project" => "Projet",
@@ -74,4 +74,5 @@ return [
     "shortcut_edit" => "Éditer la ligne",
     "shortcut_delete" => "Supprimer la ligne",
     "filter_all" => "Tous",
+    "search_domains" => "Acheter un domaine",
 ];

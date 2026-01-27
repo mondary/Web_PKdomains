@@ -73,6 +73,10 @@ foreach ($domains as $d) {
         <div class="brand"><?php echo htmlspecialchars($config["site_name"]); ?></div>
         <div class="nav"></div>
         <div class="spacer"></div>
+        <form class="domain-garden-search" action="https://domain.garden/" method="get" target="_blank" rel="noopener noreferrer">
+          <img src="https://domain.garden/favicon.ico" alt="" class="domain-garden-logo" referrerpolicy="no-referrer">
+          <input class="domain-garden-input" type="search" name="q" placeholder="<?php echo t("search_domains"); ?>">
+        </form>
         <button class="topbar-action" type="button" data-settings-open><?php echo t("options"); ?></button>
         <a class="topbar-action" href="logout.php"><?php echo t("logout"); ?></a>
         
@@ -128,14 +132,20 @@ foreach ($domains as $d) {
               >
                 <td class="domain-cell <?php echo $is_visible("domain") ? "" : "col-hidden"; ?>" data-col="domain">
                   <?php $domain = htmlspecialchars($d["domain"] ?? ""); ?>
-                  <?php $thumb = cache_site_thumbnail($d["domain"] ?? ""); ?>
+                  <?php $thumb = get_cached_thumbnail($d["domain"] ?? ""); ?>
                   <?php $favicon = cache_favicon($d["domain"] ?? ""); ?>
-                  <?php if ($thumb): ?>
-                    <img class="thumb" src="<?php echo htmlspecialchars($thumb); ?>" alt="">
-                  <?php endif; ?>
-                  <?php if ($favicon): ?>
-                    <img class="favicon" src="<?php echo htmlspecialchars($favicon); ?>" alt="">
-                  <?php endif; ?>
+                  <span class="domain-media">
+                    <?php if ($thumb): ?>
+                      <img class="thumb" src="<?php echo htmlspecialchars($thumb); ?>" alt="">
+                    <?php else: ?>
+                      <span class="thumb placeholder"></span>
+                    <?php endif; ?>
+                    <?php if ($favicon): ?>
+                      <img class="favicon" src="<?php echo htmlspecialchars($favicon); ?>" alt="">
+                    <?php else: ?>
+                      <span class="favicon placeholder"></span>
+                    <?php endif; ?>
+                  </span>
                   <a class="link" href="https://<?php echo $domain; ?>" target="_blank" rel="noopener noreferrer"><?php echo $domain; ?></a>
                 </td>
                 <td class="<?php echo $is_visible("registrar") ? "" : "col-hidden"; ?>" data-col="registrar">
@@ -205,7 +215,7 @@ foreach ($domains as $d) {
         <label class="auth-label" for="d-registrar"><?php echo t("label_registrar"); ?></label>
         <input class="auth-input" id="d-registrar" name="registrar" type="text" data-field-registrar>
         <label class="auth-label" for="d-expires"><?php echo t("label_expiration"); ?></label>
-        <input class="auth-input" id="d-expires" name="expires" type="text" placeholder="2026-12-31" data-field-expires>
+        <input class="auth-input" id="d-expires" name="expires" type="text" inputmode="numeric" maxlength="10" placeholder="YYYY-MM-DD" data-field-expires pattern="^\\d{4}-\\d{2}-\\d{2}$" title="YYYY-MM-DD">
         <label class="auth-label" for="d-status"><?php echo t("label_status"); ?></label>
         <input class="auth-input" id="d-status" name="status" type="text" value="Active">
         <label class="auth-label" for="d-email"><?php echo t("label_email"); ?></label>

@@ -74,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
           <label class="auth-label" for="registrar"><?php echo t("label_registrar"); ?></label>
           <input class="auth-input" id="registrar" name="registrar" type="text" value="<?php echo htmlspecialchars($row["registrar"] ?? ""); ?>">
           <label class="auth-label" for="expires"><?php echo t("label_expiration"); ?></label>
-          <input class="auth-input" id="expires" name="expires" type="text" value="<?php echo htmlspecialchars($row["expires"] ?? ""); ?>">
+          <input class="auth-input" id="expires" name="expires" type="text" inputmode="numeric" maxlength="10" placeholder="YYYY-MM-DD" pattern="^\\d{4}-\\d{2}-\\d{2}$" title="YYYY-MM-DD" value="<?php echo htmlspecialchars($row["expires"] ?? ""); ?>">
           <label class="auth-label" for="status"><?php echo t("label_status"); ?></label>
           <input class="auth-input" id="status" name="status" type="text" value="<?php echo htmlspecialchars($row["status"] ?? "Active"); ?>">
           <label class="auth-label" for="email"><?php echo t("label_email"); ?></label>

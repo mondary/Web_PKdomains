@@ -74,4 +74,5 @@ return [
     "shortcut_edit" => "Edit row",
     "shortcut_delete" => "Delete row",
     "filter_all" => "All",
+    "search_domains" => "Domain search",
 ];

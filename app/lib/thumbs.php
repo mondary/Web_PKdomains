@@ -14,6 +14,16 @@ function thumb_paths(string $domain): array {
     ];
 }
 
+function get_cached_thumbnail(string $domain): ?string {
+    $domain = trim($domain);
+    if ($domain === "") return null;
+    $paths = thumb_paths($domain);
+    if (is_file($paths["png"])) {
+        return $paths["public_png"];
+    }
+    return null;
+}
+
 function cache_site_thumbnail(string $domain, bool $force = false): ?string {
     $domain = trim($domain);
     if ($domain === "") return null;

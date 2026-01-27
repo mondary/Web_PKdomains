@@ -241,6 +241,19 @@ const openDrawer = (mode, data = {}) => {
   }
 };
 
+const formatDateInput = (inputEl) => {
+  if (!inputEl) return;
+  inputEl.addEventListener("input", () => {
+    let v = inputEl.value.replace(/[^\d]/g, "").slice(0, 8);
+    if (v.length >= 5) v = v.slice(0, 4) + "-" + v.slice(4);
+    if (v.length >= 8) v = v.slice(0, 7) + "-" + v.slice(7);
+    inputEl.value = v;
+  });
+};
+
+formatDateInput(document.querySelector("#d-expires"));
+formatDateInput(document.querySelector("#expires"));
+
 const closeDrawer = () => {
   if (!drawer || !drawerBackdrop) return;
   drawer.classList.remove("open");

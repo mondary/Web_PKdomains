@@ -103,6 +103,27 @@ body {
 .topbar-action:hover {
   background: #e5e9f0;
 }
+.domain-garden-search {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #eef2f6;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+.domain-garden-logo {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+.domain-garden-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 12px;
+  width: 140px;
+}
 .link.danger {
   color: var(--danger);
   background: none;
@@ -123,9 +144,14 @@ body {
   height: 100%;
   max-height: 64px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 0;
   border: 1px solid var(--line);
   margin-right: 0;
+}
+.thumb.placeholder {
+  display: inline-block;
+  background: #f8fafc;
+  border: 1px dashed var(--line);
 }
 .favicon {
   width: 16px;
@@ -133,6 +159,11 @@ body {
   border-radius: 4px;
   border: 1px solid var(--line);
   background: #fff;
+}
+.favicon.placeholder {
+  display: inline-block;
+  background: transparent;
+  border: 1px dashed var(--line);
 }
 .registrar-logo {
   width: 18px;
@@ -366,11 +397,18 @@ tbody tr {
   height: 64px;
 }
 .domain-cell {
-  padding: 0 16px;
+  padding: 0 16px 0 0;
   display: flex;
   align-items: center;
   gap: 10px;
   height: 64px;
+}
+.domain-media {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: 110px;
+  flex: 0 0 110px;
 }
 .muted { color: var(--muted); }
 .pill {
