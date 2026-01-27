@@ -288,6 +288,13 @@ kbd {
   border-radius: 6px;
   font-size: 11px;
 }
+.version {
+  position: fixed;
+  left: 12px;
+  bottom: 10px;
+  font-size: 11px;
+  color: var(--muted);
+}
 
 .container {
   max-width: 1200px;

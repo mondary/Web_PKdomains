@@ -19,7 +19,12 @@ function get_cached_thumbnail(string $domain): ?string {
     if ($domain === "") return null;
     $paths = thumb_paths($domain);
     if (is_file($paths["png"])) {
-        return $paths["public_png"];
+        $header = @file_get_contents($paths["png"], false, null, 0, 6);
+        if ($header && substr($header, 0, 4) === "\x89PNG") {
+            return $paths["public_png"];
+        }
+        // Not a PNG (likely GIF placeholder) -> remove
+        @unlink($paths["png"]);
     }
     return null;
 }
@@ -38,19 +43,23 @@ function cache_site_thumbnail(string $domain, bool $force = false): ?string {
         @mkdir($paths["dir"], 0775, true);
     }
 
-    // Use thum.io service (free, returns PNG directly)
-    $url = "https://image.thum.io/get/width/600/https://" . $domain;
     $context = stream_context_create([
         "http" => [
             "timeout" => 15,
-            "user_agent" => "Mozilla/5.0 (compatible; DomainManager/1.0)",
+            "user_agent" => "DomainManager-Thumb/1.0",
         ],
     ]);
-    $raw = @file_get_contents($url, false, $context);
 
-    if ($raw && strlen($raw) > 1000) {
-        @file_put_contents($paths["png"], $raw);
-        return $paths["public_png"];
+    $urls = [
+        "https://s.wordpress.com/mshots/v1/" . urlencode("https://" . $domain) . "?w=600",
+        "https://image.thum.io/get/width/600/https://" . $domain,
+    ];
+    foreach ($urls as $url) {
+        $raw = @file_get_contents($url, false, $context);
+        if ($raw && strlen($raw) > 1000 && substr($raw, 0, 4) === "\x89PNG") {
+            @file_put_contents($paths["png"], $raw);
+            return $paths["public_png"];
+        }
     }
     return null;
 }

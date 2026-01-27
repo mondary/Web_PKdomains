@@ -136,10 +136,10 @@ foreach ($domains as $d) {
                   <?php $favicon = cache_favicon($d["domain"] ?? ""); ?>
                   <span class="domain-media">
                     <?php if ($thumb): ?>
-                      <img class="thumb" src="<?php echo htmlspecialchars($thumb); ?>" alt="">
-                    <?php else: ?>
-                      <span class="thumb placeholder"></span>
-                    <?php endif; ?>
+                    <img class="thumb" src="<?php echo htmlspecialchars($thumb); ?>" alt="" data-thumb-loaded="1">
+                  <?php else: ?>
+                    <span class="thumb placeholder" data-thumb-missing="1"></span>
+                  <?php endif; ?>
                     <?php if ($favicon): ?>
                       <img class="favicon" src="<?php echo htmlspecialchars($favicon); ?>" alt="">
                     <?php else: ?>
@@ -285,6 +285,7 @@ foreach ($domains as $d) {
       </div>
       <button class="topbar-action" type="button" data-shortcuts-close><?php echo t("close"); ?></button>
     </div>
+    <div class="version">v<?php echo htmlspecialchars($config["version"] ?? ""); ?></div>
     <script src="assets/app.js"></script>
   </body>
 </html>

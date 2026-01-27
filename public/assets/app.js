@@ -72,6 +72,33 @@ if (daysFilter) daysFilter.addEventListener("change", () => {
 });
 updateToast();
 
+const refreshThumbs = () => {
+  const rowsMissing = Array.from(document.querySelectorAll("[data-thumb-missing='1']"));
+  rowsMissing.forEach((placeholder) => {
+    const row = placeholder.closest("tr");
+    const domain = row ? row.getAttribute("data-domain") : null;
+    if (!domain) return;
+    const key = "thumb_attempt_" + domain;
+    const last = Number(localStorage.getItem(key) || "0");
+    const now = Date.now();
+    if (now - last < 24 * 60 * 60 * 1000) return;
+    localStorage.setItem(key, String(now));
+    fetch(`thumb.php?domain=${encodeURIComponent(domain)}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data && data.ok && data.url) {
+          const img = document.createElement("img");
+          img.className = "thumb";
+          img.src = data.url;
+          img.setAttribute("data-thumb-loaded", "1");
+          placeholder.replaceWith(img);
+        }
+      })
+      .catch(() => {});
+  });
+};
+refreshThumbs();
+
 let sortState = { key: null, dir: "asc" };
 const sortKeyIndex = {
   domain: 1,
