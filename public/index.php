@@ -3,6 +3,7 @@ $config = require __DIR__ . "/../config.php";
 require_once __DIR__ . "/../app/lib/auth.php";
 require_once __DIR__ . "/../app/lib/db.php";
 require_once __DIR__ . "/../app/lib/i18n.php";
+require_once __DIR__ . "/../app/lib/logos.php";
 date_default_timezone_set($config["timezone"]);
 require_login($config);
 
@@ -29,26 +30,15 @@ function status_class($days) {
 }
 
 function registrar_logo_url($registrar) {
-    $r = strtolower(trim((string)$registrar));
-    if ($r === "") return null;
-    $map = [
-        "ovh" => "ovh.com",
-        "ovh sas" => "ovh.com",
-        "spaceship" => "spaceship.com",
-        "spaceship, inc." => "spaceship.com",
-        "key-systems" => "key-systems.net",
-        "key-systems gmbh" => "key-systems.net",
-        "namecheap" => "namecheap.com",
-        "godaddy" => "godaddy.com",
-        "gandi" => "gandi.net",
-        "cloudflare" => "cloudflare.com",
-    ];
-    foreach ($map as $key => $domain) {
-        if (strpos($r, $key) !== false) {
-            return "https://logo.clearbit.com/" . $domain;
-        }
-    }
-    return null;
+    $domain = registrar_domain_for_logo((string)$registrar);
+    if (!$domain) return null;
+    return "https://logo.clearbit.com/" . $domain;
+}
+
+function registrar_site_url($registrar) {
+    $domain = registrar_domain_for_logo((string)$registrar);
+    if (!$domain) return null;
+    return "https://www." . $domain . "/";
 }
 
 $total = count($domains);
@@ -74,14 +64,15 @@ foreach ($domains as $d) {
         <div class="spacer"></div>
         <button class="topbar-action" type="button" data-settings-open><?php echo t("options"); ?></button>
         <a class="topbar-action" href="logout.php"><?php echo t("logout"); ?></a>
-        <div class="badge"><?php echo t("expiring_badge", ["count" => $expiring]); ?></div>
+        
       </div>
     </div>
 
     <div class="container">
       <div class="header">
-        <h1><?php echo t("domains"); ?></h1>
-        <div class="hint"><?php echo t("header_hint"); ?></div>
+        <div>
+          <div class="hint"><?php echo t("header_hint"); ?></div>
+        </div>
       </div>
 
       <div class="controls">
@@ -89,8 +80,11 @@ foreach ($domains as $d) {
           <span class="muted">🔎</span>
           <input data-search type="text" placeholder="<?php echo t("search_placeholder"); ?>">
         </div>
-        <select class="select">
-          <option><?php echo t("label_alert_days"); ?>: <?php echo htmlspecialchars(implode(", ", $config["alert_days"])); ?></option>
+        <select class="select" data-days-filter>
+          <option value="30" selected>&lt; 30j</option>
+          <option value="60">&lt; 60j</option>
+          <option value="90">&lt; 90j</option>
+          <option value="180">&lt; 180j</option>
         </select>
         <button class="btn primary" type="button" data-drawer-open="add"><?php echo t("add_domain"); ?></button>
       </div>
@@ -98,14 +92,21 @@ foreach ($domains as $d) {
       <div class="table-card">
         <table>
           <thead>
-            <tr>
-              <th><?php echo t("table_domain"); ?></th>
-              <th><?php echo t("table_project"); ?></th>
+                <tr tabindex="0"
+                    data-domain="<?php echo htmlspecialchars($d["domain"] ?? ""); ?>"
+                    data-project="<?php echo htmlspecialchars($d["project"] ?? ""); ?>"
+                    data-registrar="<?php echo htmlspecialchars($d["registrar"] ?? ""); ?>"
+                    data-expires="<?php echo htmlspecialchars($d["expires"] ?? ""); ?>"
+                    data-status="<?php echo htmlspecialchars($d["status"] ?? ""); ?>"
+                    data-email="<?php echo htmlspecialchars($d["email"] ?? ""); ?>"
+                >
+              <th><?php echo t("table_domain"); ?> (<?php echo $total; ?>)</th>
               <th><?php echo t("table_registrar"); ?></th>
               <th><?php echo t("table_expiration"); ?></th>
               <th><?php echo t("table_days_left"); ?></th>
               <th><?php echo t("table_status"); ?></th>
               <th><?php echo t("table_email"); ?></th>
+              <th><?php echo t("table_project"); ?></th>
               <th></th>
             </tr>
           </thead>
@@ -113,15 +114,24 @@ foreach ($domains as $d) {
             <?php foreach ($domains as $d): ?>
               <?php $days = days_until($d["expires"] ?? ""); ?>
               <tr>
-                <td><strong><?php echo htmlspecialchars($d["domain"] ?? ""); ?></strong></td>
-                <td class="muted"><?php echo htmlspecialchars($d["project"] ?? ""); ?></td>
+                <td>
+                  <?php $domain = htmlspecialchars($d["domain"] ?? ""); ?>
+                  <a class="link" href="https://<?php echo $domain; ?>" target="_blank" rel="noopener noreferrer"><?php echo $domain; ?></a>
+                </td>
                 <td>
                   <div class="registrar">
                     <?php $logo = registrar_logo_url($d["registrar"] ?? ""); ?>
+                    <?php $cached_logo = cache_registrar_logo($d["registrar"] ?? ""); ?>
+                    <?php $reg_url = registrar_site_url($d["registrar"] ?? ""); ?>
                     <?php if ($logo): ?>
-                      <img class="registrar-logo" src="<?php echo htmlspecialchars($logo); ?>" alt="">
+                      <?php $alt_logo = str_replace("https://logo.clearbit.com/", "https://icons.duckduckgo.com/ip3/", $logo) . ".ico"; ?>
+                      <img class="registrar-logo" src="<?php echo htmlspecialchars($cached_logo ?: $logo); ?>" data-alt-src="<?php echo htmlspecialchars($alt_logo); ?>" alt="" referrerpolicy="no-referrer">
                     <?php endif; ?>
-                    <span><?php echo htmlspecialchars($d["registrar"] ?? ""); ?></span>
+                    <?php if ($reg_url): ?>
+                      <a class="link" href="<?php echo htmlspecialchars($reg_url); ?>" target="_blank" rel="noopener noreferrer"><?php echo htmlspecialchars($d["registrar"] ?? ""); ?></a>
+                    <?php else: ?>
+                      <span><?php echo htmlspecialchars($d["registrar"] ?? ""); ?></span>
+                    <?php endif; ?>
                   </div>
                 </td>
                 <td><?php echo htmlspecialchars($d["expires"] ?? ""); ?></td>
@@ -135,8 +145,9 @@ foreach ($domains as $d) {
                   ?>
                 </span></td>
                 <td class="muted"><?php echo htmlspecialchars(($d["email"] ?? "") ?: $config["email_to"]); ?></td>
+                <td class="muted"><?php echo htmlspecialchars($d["project"] ?? ""); ?></td>
                 <td class="actions">
-                  <button class="link" type="button"
+                  <button class="icon-button" type="button"
                     data-drawer-open="edit"
                     data-domain="<?php echo htmlspecialchars($d["domain"] ?? ""); ?>"
                     data-project="<?php echo htmlspecialchars($d["project"] ?? ""); ?>"
@@ -158,6 +169,7 @@ foreach ($domains as $d) {
         Alert thresholds: <?php echo implode(", ", $config["alert_days"]); ?> days.
       </div>
     </div>
+    <div class="toast" data-expiring-toast><?php echo t("expiring_badge", ["count" => $expiring, "threshold" => 30]); ?></div>
     <div class="drawer-backdrop" data-drawer-backdrop></div>
     <div class="drawer" data-drawer>
       <div class="drawer-header">
@@ -203,8 +215,8 @@ foreach ($domains as $d) {
         <input class="auth-input" id="s-prefix" name="mail_subject_prefix" type="text" value="<?php echo htmlspecialchars($config["mail_subject_prefix"]); ?>">
         <label class="auth-label" for="s-lang"><?php echo t("label_language"); ?></label>
         <select class="select" id="s-lang" name="language">
-          <option value="fr" <?php echo ($config["language"] ?? "fr") === "fr" ? "selected" : ""; ?>>FR</option>
-          <option value="en" <?php echo ($config["language"] ?? "fr") === "en" ? "selected" : ""; ?>>EN</option>
+          <option value="fr" <?php echo ($config["language"] ?? "fr") === "fr" ? "selected" : ""; ?>>FR 🇫🇷</option>
+          <option value="en" <?php echo ($config["language"] ?? "fr") === "en" ? "selected" : ""; ?>>EN 🇺🇸</option>
         </select>
         <label class="auth-label" for="s-days"><?php echo t("label_alert_days"); ?></label>
         <input class="auth-input" id="s-days" name="alert_days" type="text" value="<?php echo htmlspecialchars(implode(", ", $config["alert_days"])); ?>">
@@ -216,9 +228,25 @@ foreach ($domains as $d) {
         autofill_enter_domain: "<?php echo htmlspecialchars(t("autofill_enter_domain")); ?>",
         autofill_lookup: "<?php echo htmlspecialchars(t("autofill_lookup")); ?>",
         autofill_done: "<?php echo htmlspecialchars(t("autofill_done")); ?>",
-        autofill_failed: "<?php echo htmlspecialchars(t("autofill_failed")); ?>"
+        autofill_failed: "<?php echo htmlspecialchars(t("autofill_failed")); ?>",
+        delete_confirm: "<?php echo htmlspecialchars(t("delete_confirm")); ?>",
+        expiring_badge: "<?php echo htmlspecialchars(t("expiring_badge")); ?>"
       };
     </script>
+    <div class="shortcuts" data-shortcuts>
+      <div class="shortcuts-title"><?php echo t("shortcuts_title"); ?></div>
+      <div class="shortcuts-grid">
+        <div class="shortcut"><kbd>A</kbd><span><?php echo t("shortcut_add"); ?></span></div>
+        <div class="shortcut"><kbd>O</kbd><span><?php echo t("shortcut_options"); ?></span></div>
+        <div class="shortcut"><kbd>/</kbd><span><?php echo t("shortcut_search"); ?></span></div>
+        <div class="shortcut"><kbd>?</kbd><span><?php echo t("shortcut_help"); ?></span></div>
+        <div class="shortcut"><kbd>Esc</kbd><span><?php echo t("shortcut_close"); ?></span></div>
+        <div class="shortcut"><kbd>↑/↓</kbd><span><?php echo t("shortcut_nav"); ?></span></div>
+        <div class="shortcut"><kbd>Enter</kbd><span><?php echo t("shortcut_edit"); ?></span></div>
+        <div class="shortcut"><kbd>Del</kbd><span><?php echo t("shortcut_delete"); ?></span></div>
+      </div>
+      <button class="topbar-action" type="button" data-shortcuts-close><?php echo t("close"); ?></button>
+    </div>
     <script src="assets/app.js"></script>
   </body>
 </html>

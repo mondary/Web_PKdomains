@@ -1,15 +1,127 @@
 const input = document.querySelector("[data-search]");
 const rows = Array.from(document.querySelectorAll("tbody tr"));
+const daysFilter = document.querySelector("[data-days-filter]");
+const toast = document.querySelector("[data-expiring-toast]");
+const shortcuts = document.querySelector("[data-shortcuts]");
+const shortcutsClose = document.querySelector("[data-shortcuts-close]");
+
+document.querySelectorAll("img.registrar-logo").forEach((img) => {
+  img.addEventListener("error", () => {
+    const alt = img.getAttribute("data-alt-src");
+    if (alt && img.src !== alt) {
+      img.src = alt;
+      return;
+    }
+    img.style.display = "none";
+  });
+});
 
 if (input) {
   input.addEventListener("input", () => {
     const q = input.value.trim().toLowerCase();
     rows.forEach((row) => {
       const text = row.innerText.toLowerCase();
+      row.dataset.searchMatch = text.includes(q) ? "1" : "0";
       row.style.display = text.includes(q) ? "" : "none";
     });
   });
 }
+
+const getDaysValue = (row) => {
+  const cell = row.querySelector("td:nth-child(4)");
+  const val = cell ? parseInt(cell.textContent.trim(), 10) : NaN;
+  return isNaN(val) ? null : val;
+};
+
+const updateToast = () => {
+  if (!toast || !daysFilter) return;
+  const threshold = parseInt(daysFilter.value, 10);
+  const count = rows.filter((row) => {
+    const days = getDaysValue(row);
+    return days !== null && days < threshold;
+  }).length;
+  const i18n = window.I18N || {};
+  const template = i18n.expiring_badge || "{count} expiring ≤ {threshold}d";
+  toast.textContent = template
+    .replace("{count}", String(count))
+    .replace("{threshold}", String(threshold));
+  toast.classList.remove("t180", "t90", "t60", "t30");
+  if (threshold <= 30) toast.classList.add("t30");
+  else if (threshold <= 60) toast.classList.add("t60");
+  else if (threshold <= 90) toast.classList.add("t90");
+  else toast.classList.add("t180");
+};
+
+const applyFilters = () => {
+  const q = input ? input.value.trim().toLowerCase() : "";
+  const maxDays = daysFilter && daysFilter.value !== "all" ? parseInt(daysFilter.value, 10) : null;
+  rows.forEach((row) => {
+    const text = row.innerText.toLowerCase();
+    const matchesSearch = q === "" || text.includes(q);
+    const daysVal = getDaysValue(row);
+    const matchesDays = maxDays === null || (daysVal !== null && daysVal < maxDays);
+    row.style.display = matchesSearch && matchesDays ? "" : "none";
+  });
+};
+
+if (input) input.addEventListener("input", applyFilters);
+if (daysFilter) daysFilter.addEventListener("change", () => {
+  applyFilters();
+  updateToast();
+});
+updateToast();
+
+let selectedIndex = -1;
+const visibleRows = () => rows.filter((r) => r.style.display !== "none");
+const selectRow = (idx) => {
+  const list = visibleRows();
+  if (!list.length) return;
+  const clamped = Math.max(0, Math.min(idx, list.length - 1));
+  list.forEach((r) => r.classList.remove("selected"));
+  const row = list[clamped];
+  row.classList.add("selected");
+  row.focus();
+  selectedIndex = clamped;
+};
+
+const openEditForRow = (row) => {
+  if (!row) return;
+  openDrawer("edit", {
+    domain: row.getAttribute("data-domain") || "",
+    project: row.getAttribute("data-project") || "",
+    registrar: row.getAttribute("data-registrar") || "",
+    expires: row.getAttribute("data-expires") || "",
+    status: row.getAttribute("data-status") || "",
+    email: row.getAttribute("data-email") || "",
+  });
+};
+
+const deleteRow = (row) => {
+  if (!row) return;
+  const domain = row.getAttribute("data-domain") || "";
+  if (!domain) return;
+  if (!confirm((window.I18N && window.I18N.delete_confirm) || "Delete this domain?")) return;
+  const form = document.createElement("form");
+  form.method = "post";
+  form.action = "delete.php";
+  const input = document.createElement("input");
+  input.type = "hidden";
+  input.name = "domain";
+  input.value = domain;
+  form.appendChild(input);
+  document.body.appendChild(form);
+  form.submit();
+};
+
+const openShortcuts = () => {
+  if (!shortcuts) return;
+  shortcuts.classList.add("open");
+};
+const closeShortcuts = () => {
+  if (!shortcuts) return;
+  shortcuts.classList.remove("open");
+};
+if (shortcutsClose) shortcutsClose.addEventListener("click", closeShortcuts);
 
 const autofillBtn = document.querySelector("[data-autofill]");
 if (autofillBtn) {
@@ -71,6 +183,10 @@ const openDrawer = (mode, data = {}) => {
     const delInput = deleteForm.querySelector("input[name='domain']");
     if (delInput) delInput.value = data.domain || "";
   }
+  const focusEl = form.querySelector("#d-domain");
+  if (focusEl) {
+    setTimeout(() => focusEl.focus(), 0);
+  }
 };
 
 const closeDrawer = () => {
@@ -116,6 +232,7 @@ if (drawerBackdrop) {
   drawerBackdrop.addEventListener("click", () => {
     closeDrawer();
     closeSettings();
+    closeShortcuts();
   });
 }
 
@@ -123,3 +240,61 @@ const settingsOpen = document.querySelector("[data-settings-open]");
 const settingsClose = document.querySelector("[data-settings-close]");
 if (settingsOpen) settingsOpen.addEventListener("click", openSettings);
 if (settingsClose) settingsClose.addEventListener("click", closeSettings);
+
+document.addEventListener("keydown", (e) => {
+  const isInput = ["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement?.tagName || "");
+  if (e.key === "Escape") {
+    closeDrawer();
+    closeSettings();
+    closeShortcuts();
+    return;
+  }
+  if (e.key === "?" && !isInput) {
+    e.preventDefault();
+    openShortcuts();
+    return;
+  }
+  if (isInput) return;
+  if (e.key === "a" || e.key === "A") {
+    e.preventDefault();
+    openDrawer("add");
+    return;
+  }
+  if (e.key === "o" || e.key === "O") {
+    e.preventDefault();
+    openSettings();
+    return;
+  }
+  if (e.key === "/") {
+    e.preventDefault();
+    if (input) input.focus();
+    return;
+  }
+  if (e.key === "ArrowDown") {
+    e.preventDefault();
+    selectRow(selectedIndex + 1);
+    return;
+  }
+  if (e.key === "ArrowUp") {
+    e.preventDefault();
+    selectRow(selectedIndex - 1);
+    return;
+  }
+  if (e.key === "Enter") {
+    const list = visibleRows();
+    const row = list[selectedIndex] || list[0];
+    if (row) {
+      e.preventDefault();
+      openEditForRow(row);
+    }
+    return;
+  }
+  if (e.key === "Delete" || e.key === "Backspace") {
+    const list = visibleRows();
+    const row = list[selectedIndex] || list[0];
+    if (row) {
+      e.preventDefault();
+      deleteRow(row);
+    }
+  }
+});

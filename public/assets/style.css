@@ -53,6 +53,33 @@ body {
   padding: 6px 10px;
   border-radius: 999px;
 }
+.expiring-highlight {
+  margin-left: auto;
+  background: #0f172a;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.toast {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  background: #0f172a;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 10px 14px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  z-index: 25;
+}
+.toast.t180 { background: #0f172a; }
+.toast.t90 { background: #b45309; }
+.toast.t60 { background: #c2410c; }
+.toast.t30 { background: #b91c1c; }
 .link {
   color: var(--primary-dark);
   font-size: 13px;
@@ -101,6 +128,22 @@ body {
   height: 16px;
   display: inline-block;
   fill: currentColor;
+}
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #f1f4f8;
+  color: #475569;
+  cursor: pointer;
+}
+.icon-button:hover {
+  background: #e7ebf2;
+  color: #1f2937;
 }
 .inline {
   display: inline;
@@ -155,6 +198,45 @@ body {
 .drawer-backdrop.open {
   opacity: 1;
   pointer-events: auto;
+}
+
+.shortcuts {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 300px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 14px;
+  display: none;
+  z-index: 30;
+}
+.shortcuts.open { display: block; }
+.shortcuts-title {
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.shortcuts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 10px;
+  margin-bottom: 10px;
+}
+.shortcut {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+kbd {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 11px;
 }
 
 .container {
@@ -221,6 +303,13 @@ body {
   border-radius: 16px;
   box-shadow: var(--shadow);
   overflow: hidden;
+}
+tbody tr:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
+tbody tr.selected {
+  background: #eef2ff;
 }
 table {
   width: 100%;

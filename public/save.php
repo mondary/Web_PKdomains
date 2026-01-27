@@ -3,6 +3,7 @@ $config = require __DIR__ . "/../config.php";
 require_once __DIR__ . "/../app/lib/auth.php";
 require_once __DIR__ . "/../app/lib/db.php";
 require_once __DIR__ . "/../app/lib/rdap.php";
+require_once __DIR__ . "/../app/lib/logos.php";
 date_default_timezone_set($config["timezone"]);
 require_login($config);
 
@@ -59,6 +60,9 @@ try {
             ":s" => $status,
             ":m" => $email,
         ]);
+    }
+    if ($registrar !== "") {
+        cache_registrar_logo($registrar);
     }
 } catch (PDOException $e) {
     // Silent fail: return to list

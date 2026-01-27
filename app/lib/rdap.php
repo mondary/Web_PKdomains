@@ -93,20 +93,21 @@ function rdap_lookup(array $config, string $domain): array {
     $tld = end($parts);
     $bootstrap = rdap_bootstrap($config);
     $base = rdap_find_base_url($bootstrap, $tld);
-    if (!$base) {
-        return ["ok" => false, "error" => "RDAP not available for this TLD."];
-    }
-
-    $url = rtrim($base, "/") . "/domain/" . urlencode($domain);
+    $url = $base ? rtrim($base, "/") . "/domain/" . urlencode($domain) : null;
     $context = stream_context_create([
         "http" => [
             "timeout" => 5,
             "user_agent" => "DomainManager-RDAP/1.0",
         ],
     ]);
-    $raw = @file_get_contents($url, false, $context);
+    $raw = $url ? @file_get_contents($url, false, $context) : false;
     if (!$raw) {
-        return ["ok" => false, "error" => "RDAP lookup failed."];
+        $fallback = "https://rdap.org/domain/" . urlencode($domain);
+        $raw = @file_get_contents($fallback, false, $context);
+        if (!$raw) {
+            return ["ok" => false, "error" => "RDAP not available for this TLD."];
+        }
+        $url = $fallback;
     }
 
     $json = json_decode($raw, true);
