@@ -128,7 +128,6 @@ function apply_settings(PDO $db, array $config, ?int $user_id = null): array {
     $defaults = [
         "site_name" => $config["site_name"],
         "email_to" => $config["email_to"],
-        "email_from" => $config["email_from"],
         "mail_subject_prefix" => $config["mail_subject_prefix"],
         "alert_days" => $config["alert_days"],
         "language" => $config["language"] ?? "fr",
@@ -161,7 +160,6 @@ function apply_settings(PDO $db, array $config, ?int $user_id = null): array {
 
     $config["site_name"] = $settings["site_name"] ?? $config["site_name"];
     $config["email_to"] = $settings["email_to"] ?? $config["email_to"];
-    $config["email_from"] = $settings["email_from"] ?? $config["email_from"];
     $config["mail_subject_prefix"] = $settings["mail_subject_prefix"] ?? $config["mail_subject_prefix"];
     $config["language"] = $settings["language"] ?? ($config["language"] ?? "fr");
     if (!empty($settings["alert_days"])) {

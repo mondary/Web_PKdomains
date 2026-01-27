@@ -4,15 +4,17 @@ Minimal web dashboard for tracking domain expirations with email alerts.
 Now uses SQLite for authentication and data.
 
 ## Files
-- `public/`: web root (PHP + assets + app)
+- `index.php`: main entry (root)
+- `public/`: web assets + app entrypoints
 - `public/app/`: application logic (lib + cron)
-- `config.php`: configuration (tracked)
+- `public/config.php`: configuration (tracked)
 - `data/app.sqlite`: database (users, domains, notifications)
+- `data/credentials.php`: secrets (ignored by git)
 
 ## Setup
-1) Edit `config.php` (timezone, email_to/from, thresholds, DB path).
-2) Upload everything to your OVH FTP.
-3) Point your web root to `public/`.
+1) Edit `public/config.php` (timezone, DB path, etc.).
+2) Create `data/credentials.php` (see below).
+3) Upload everything to your OVH FTP.
 4) Ensure `data/` is writable by PHP.
 5) Open the site in browser.
 
@@ -22,7 +24,26 @@ username: admin
 password: admin123
 ```
 
-No secrets override file is used.
+## Credentials (required)
+Create `data/credentials.php` with at least these keys:
+```php
+<?php
+return [
+  "email_from" => "domains@yourdomain.tld",
+  "smtp_host" => "smtp.mail.ovh.net",
+  "smtp_port" => 587,
+  "smtp_user" => "domains@yourdomain.tld",
+  "smtp_pass" => "YOUR_PASSWORD",
+  "smtp_secure" => "starttls",
+];
+```
+
+Optional keys you can add:
+```php
+"mail_subject_prefix" => "[Domain Alerts] ",
+```
+
+`email_to` is per-user (set in Options in the UI).
 
 ## RDAP auto-fill (free)
 The add form can auto-fill registrar and expiration using public RDAP servers.
@@ -37,5 +58,5 @@ php /path/to/public/app/cron/alert.php
 On OVH, add a cron task in the manager (daily at e.g. 08:00).
 
 ## Notes
-- Uses PHP `mail()`. If your host blocks it, you'll need SMTP (I can add that).
+- Uses SMTP if configured in `data/credentials.php`, otherwise falls back to PHP `mail()`.
 - All data is stored in SQLite.

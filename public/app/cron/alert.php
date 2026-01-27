@@ -1,6 +1,7 @@
 <?php
 $config = require __DIR__ . "/../../config.php";
 require_once __DIR__ . "/../lib/db.php";
+require_once __DIR__ . "/../lib/mail.php";
 date_default_timezone_set($config["timezone"]);
 
 $db = get_db($config);
@@ -16,9 +17,8 @@ function days_until($date) {
     return (int)$diff->format("%r%a");
 }
 
-function send_alert($to, $from, $subject, $message) {
-    $headers = "From: {$from}\r\nReply-To: {$from}\r\n";
-    return mail($to, $subject, $message, $headers);
+function send_alert(array $config, $to, $from, $subject, $message) {
+    return send_mail($config, $to, $from, $subject, $message);
 }
 
 $today = (new DateTime("today"))->format("Y-m-d");
@@ -46,7 +46,7 @@ foreach ($domains as $d) {
     $subject = $config["mail_subject_prefix"] . $domain . " expires in " . $days . " day(s)";
     $message = "Domain: {$domain}\nExpires: {$expires}\nDays left: {$days}\n";
 
-    if (send_alert($to, $config["email_from"], $subject, $message)) {
+    if (send_alert($config, $to, $config["email_from"], $subject, $message)) {
         $ins = $db->prepare("INSERT OR IGNORE INTO notifications (domain_id, days, date) VALUES (:id, :days, :date)");
         $ins->execute([":id" => $d["id"], ":days" => $days, ":date" => $today]);
         $sent++;

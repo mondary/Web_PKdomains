@@ -377,6 +377,30 @@ const settingsClose = document.querySelector("[data-settings-close]");
 if (settingsOpen) settingsOpen.addEventListener("click", openSettings);
 if (settingsClose) settingsClose.addEventListener("click", closeSettings);
 
+const testMailBtn = document.querySelector("[data-test-mail]");
+const testMailStatus = document.querySelector("[data-test-mail-status]");
+if (testMailBtn) {
+  testMailBtn.addEventListener("click", async () => {
+    const base = window.BASE_URL || "";
+    testMailBtn.disabled = true;
+    if (testMailStatus) testMailStatus.textContent = "Envoi du test…";
+    try {
+      const res = await fetch(`${base}/public/test_mail.php`);
+      const data = await res.json();
+      if (data && data.ok) {
+        if (testMailStatus) testMailStatus.textContent = `Email test envoyé à ${data.to || ""}`.trim();
+      } else {
+        const err = data && data.error ? data.error : "Échec de l'envoi";
+        if (testMailStatus) testMailStatus.textContent = err;
+      }
+    } catch (e) {
+      if (testMailStatus) testMailStatus.textContent = "Échec de l'envoi";
+    } finally {
+      testMailBtn.disabled = false;
+    }
+  });
+}
+
 document.addEventListener("keydown", (e) => {
   const isInput = ["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement?.tagName || "");
   if (e.key === "Escape") {

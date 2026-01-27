@@ -249,10 +249,10 @@ foreach ($domains as $d) {
       <form method="post" action="<?php echo htmlspecialchars(url_for($config, "public/settings.php")); ?>" class="drawer-section">
         <label class="auth-label" for="s-email-to"><?php echo t("label_email_to"); ?></label>
         <input class="auth-input" id="s-email-to" name="email_to" type="email" value="<?php echo htmlspecialchars($config["email_to"]); ?>">
-        <label class="auth-label" for="s-email-from"><?php echo t("label_email_from"); ?></label>
-        <input class="auth-input" id="s-email-from" name="email_from" type="email" value="<?php echo htmlspecialchars($config["email_from"]); ?>">
         <label class="auth-label" for="s-prefix"><?php echo t("label_prefix"); ?></label>
         <input class="auth-input" id="s-prefix" name="mail_subject_prefix" type="text" value="<?php echo htmlspecialchars($config["mail_subject_prefix"]); ?>">
+        <button class="btn" type="button" data-test-mail>Tester email</button>
+        <div class="auth-hint" data-test-mail-status></div>
         <label class="auth-label" for="s-lang"><?php echo t("label_language"); ?></label>
         <select class="select" id="s-lang" name="language">
           <option value="fr" <?php echo ($config["language"] ?? "fr") === "fr" ? "selected" : ""; ?>>FR 🇫🇷</option>

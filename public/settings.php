@@ -16,7 +16,6 @@ $uid = (int)($_SESSION["user_id"] ?? 0);
 
 $site_name = trim($_POST["site_name"] ?? $config["site_name"]);
 $email_to = trim($_POST["email_to"] ?? $config["email_to"]);
-$email_from = trim($_POST["email_from"] ?? $config["email_from"]);
 $mail_subject_prefix = trim($_POST["mail_subject_prefix"] ?? $config["mail_subject_prefix"]);
 $days_raw = trim($_POST["alert_days"] ?? "");
 $language = $_POST["language"] ?? ($config["language"] ?? "fr");
@@ -42,7 +41,6 @@ if (empty($days)) {
 $updates = [
     "site_name" => $site_name,
     "email_to" => $email_to,
-    "email_from" => $email_from,
     "mail_subject_prefix" => $mail_subject_prefix,
     "alert_days" => json_encode(array_values($days)),
     "language" => $language,
