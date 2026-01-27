@@ -21,6 +21,10 @@ $language = $_POST["language"] ?? ($config["language"] ?? "fr");
 if (!in_array($language, ["fr", "en"], true)) {
     $language = "fr";
 }
+$columns_visible = $_POST["columns_visible"] ?? ["domain", "registrar", "expiration", "days", "status", "email", "project"];
+if (!is_array($columns_visible)) {
+    $columns_visible = ["domain", "registrar", "expiration", "days", "status", "email", "project"];
+}
 
 $days = [];
 if ($days_raw !== "") {
@@ -40,6 +44,7 @@ $updates = [
     "mail_subject_prefix" => $mail_subject_prefix,
     "alert_days" => json_encode(array_values($days)),
     "language" => $language,
+    "columns_visible" => json_encode(array_values($columns_visible)),
 ];
 
 $stmt = $db->prepare("INSERT OR REPLACE INTO settings (key, value) VALUES (:k, :v)");

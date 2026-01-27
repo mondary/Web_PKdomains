@@ -57,6 +57,7 @@ function apply_settings(PDO $db, array $config): array {
         "mail_subject_prefix" => $config["mail_subject_prefix"],
         "alert_days" => $config["alert_days"],
         "language" => $config["language"] ?? "fr",
+        "columns_visible" => json_encode(["domain", "registrar", "expiration", "days", "status", "email", "project"]),
     ];
 
     $rows = $db->query("SELECT key, value FROM settings")->fetchAll();
@@ -85,6 +86,12 @@ function apply_settings(PDO $db, array $config): array {
         $decoded = json_decode($settings["alert_days"], true);
         if (is_array($decoded)) {
             $config["alert_days"] = array_values(array_map("intval", $decoded));
+        }
+    }
+    if (!empty($settings["columns_visible"])) {
+        $decoded = json_decode($settings["columns_visible"], true);
+        if (is_array($decoded)) {
+            $config["columns_visible"] = $decoded;
         }
     }
 

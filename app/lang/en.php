@@ -47,6 +47,7 @@ return [
     "label_prefix" => "Mail subject prefix",
     "label_language" => "Language",
     "label_alert_days" => "Alert days (comma-separated)",
+    "label_columns" => "Columns to display",
     "save_options" => "Save options",
     "login_title" => "Sign in",
     "login_subtitle" => "Use your account to access the dashboard.",

@@ -47,6 +47,7 @@ return [
     "label_prefix" => "Préfixe d'objet email",
     "label_language" => "Langue",
     "label_alert_days" => "Jours d'alerte (séparés par des virgules)",
+    "label_columns" => "Colonnes à afficher",
     "save_options" => "Enregistrer",
     "login_title" => "Connexion",
     "login_subtitle" => "Accède au dashboard.",

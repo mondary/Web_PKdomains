@@ -11,6 +11,10 @@ require_login($config);
 $db = get_db($config);
 $config = apply_settings($db, $config);
 $GLOBALS["i18n"] = i18n_load($config["language"] ?? "fr");
+$visible_cols = $config["columns_visible"] ?? ["domain", "registrar", "expiration", "days", "status", "email", "project"];
+$is_visible = function ($key) use ($visible_cols) {
+    return in_array($key, $visible_cols, true);
+};
 $domains = $db->query("SELECT domain, project, registrar, expires, status, email FROM domains ORDER BY domain ASC")->fetchAll();
 
 function days_until($date) {
@@ -88,8 +92,8 @@ foreach ($domains as $d) {
           <input data-search type="text" placeholder="<?php echo t("search_placeholder"); ?>">
         </div>
         <select class="select" data-days-filter>
-          <option value="all"><?php echo t("filter_all"); ?></option>
-          <option value="30" selected>&lt; 30j</option>
+          <option value="all" selected><?php echo t("filter_all"); ?></option>
+          <option value="30">&lt; 30j</option>
           <option value="60">&lt; 60j</option>
           <option value="90">&lt; 90j</option>
           <option value="180">&lt; 180j</option>
@@ -101,13 +105,13 @@ foreach ($domains as $d) {
         <table>
           <thead>
             <tr>
-              <th><button class="sort-btn" data-sort="domain"><?php echo t("table_domain"); ?> (<?php echo $total; ?>)</button></th>
-              <th><button class="sort-btn" data-sort="registrar"><?php echo t("table_registrar"); ?></button></th>
-              <th><button class="sort-btn" data-sort="expiration"><?php echo t("table_expiration"); ?></button></th>
-              <th><button class="sort-btn" data-sort="days"><?php echo t("table_days_left"); ?></button></th>
-              <th><button class="sort-btn" data-sort="status"><?php echo t("table_status"); ?></button></th>
-              <th><button class="sort-btn" data-sort="email"><?php echo t("table_email"); ?></button></th>
-              <th><button class="sort-btn" data-sort="project"><?php echo t("table_project"); ?></button></th>
+              <th class="<?php echo $is_visible("domain") ? "" : "col-hidden"; ?>" data-col="domain"><button class="sort-btn" data-sort="domain"><?php echo t("table_domain"); ?> (<?php echo $total; ?>)</button></th>
+              <th class="<?php echo $is_visible("registrar") ? "" : "col-hidden"; ?>" data-col="registrar"><button class="sort-btn" data-sort="registrar"><?php echo t("table_registrar"); ?></button></th>
+              <th class="<?php echo $is_visible("expiration") ? "" : "col-hidden"; ?>" data-col="expiration"><button class="sort-btn" data-sort="expiration"><?php echo t("table_expiration"); ?></button></th>
+              <th class="<?php echo $is_visible("days") ? "" : "col-hidden"; ?>" data-col="days"><button class="sort-btn" data-sort="days"><?php echo t("table_days_left"); ?></button></th>
+              <th class="<?php echo $is_visible("status") ? "" : "col-hidden"; ?>" data-col="status"><button class="sort-btn" data-sort="status"><?php echo t("table_status"); ?></button></th>
+              <th class="<?php echo $is_visible("email") ? "" : "col-hidden"; ?>" data-col="email"><button class="sort-btn" data-sort="email"><?php echo t("table_email"); ?></button></th>
+              <th class="<?php echo $is_visible("project") ? "" : "col-hidden"; ?>" data-col="project"><button class="sort-btn" data-sort="project"><?php echo t("table_project"); ?></button></th>
               <th></th>
             </tr>
           </thead>
@@ -122,7 +126,7 @@ foreach ($domains as $d) {
                   data-status="<?php echo htmlspecialchars($d["status"] ?? ""); ?>"
                   data-email="<?php echo htmlspecialchars($d["email"] ?? ""); ?>"
               >
-                <td class="domain-cell">
+                <td class="domain-cell <?php echo $is_visible("domain") ? "" : "col-hidden"; ?>" data-col="domain">
                   <?php $domain = htmlspecialchars($d["domain"] ?? ""); ?>
                   <?php $thumb = cache_site_thumbnail($d["domain"] ?? ""); ?>
                   <?php if ($thumb): ?>
@@ -130,7 +134,7 @@ foreach ($domains as $d) {
                   <?php endif; ?>
                   <a class="link" href="https://<?php echo $domain; ?>" target="_blank" rel="noopener noreferrer"><?php echo $domain; ?></a>
                 </td>
-                <td>
+                <td class="<?php echo $is_visible("registrar") ? "" : "col-hidden"; ?>" data-col="registrar">
                   <div class="registrar">
                     <?php $logo = registrar_logo_url($d["registrar"] ?? ""); ?>
                     <?php $cached_logo = cache_registrar_logo($d["registrar"] ?? ""); ?>
@@ -146,9 +150,9 @@ foreach ($domains as $d) {
                     <?php endif; ?>
                   </div>
                 </td>
-                <td><?php echo htmlspecialchars($d["expires"] ?? ""); ?></td>
-                <td><?php echo $days === null ? "—" : $days; ?></td>
-                <td><span class="pill <?php echo status_class($days); ?>">
+                <td class="<?php echo $is_visible("expiration") ? "" : "col-hidden"; ?>" data-col="expiration"><?php echo htmlspecialchars($d["expires"] ?? ""); ?></td>
+                <td class="<?php echo $is_visible("days") ? "" : "col-hidden"; ?>" data-col="days"><?php echo $days === null ? "—" : $days; ?></td>
+                <td class="<?php echo $is_visible("status") ? "" : "col-hidden"; ?>" data-col="status"><span class="pill <?php echo status_class($days); ?>">
                   <?php
                     if ($days === null) echo t("status_unknown");
                     elseif ($days <= 7) echo t("status_critical");
@@ -156,8 +160,8 @@ foreach ($domains as $d) {
                     else echo t("status_ok");
                   ?>
                 </span></td>
-                <td class="muted"><?php echo htmlspecialchars(($d["email"] ?? "") ?: $config["email_to"]); ?></td>
-                <td class="muted"><?php echo htmlspecialchars($d["project"] ?? ""); ?></td>
+                <td class="muted <?php echo $is_visible("email") ? "" : "col-hidden"; ?>" data-col="email"><?php echo htmlspecialchars(($d["email"] ?? "") ?: $config["email_to"]); ?></td>
+                <td class="muted <?php echo $is_visible("project") ? "" : "col-hidden"; ?>" data-col="project"><?php echo htmlspecialchars($d["project"] ?? ""); ?></td>
                 <td class="actions">
                   <button class="icon-button" type="button"
                     data-drawer-open="edit"
@@ -228,6 +232,16 @@ foreach ($domains as $d) {
           <option value="fr" <?php echo ($config["language"] ?? "fr") === "fr" ? "selected" : ""; ?>>FR 🇫🇷</option>
           <option value="en" <?php echo ($config["language"] ?? "fr") === "en" ? "selected" : ""; ?>>EN 🇺🇸</option>
         </select>
+        <label class="auth-label"><?php echo t("label_columns"); ?></label>
+        <div class="checkbox-grid">
+          <label><input type="checkbox" name="columns_visible[]" value="domain" <?php echo $is_visible("domain") ? "checked" : ""; ?>> <?php echo t("table_domain"); ?></label>
+          <label><input type="checkbox" name="columns_visible[]" value="registrar" <?php echo $is_visible("registrar") ? "checked" : ""; ?>> <?php echo t("table_registrar"); ?></label>
+          <label><input type="checkbox" name="columns_visible[]" value="expiration" <?php echo $is_visible("expiration") ? "checked" : ""; ?>> <?php echo t("table_expiration"); ?></label>
+          <label><input type="checkbox" name="columns_visible[]" value="days" <?php echo $is_visible("days") ? "checked" : ""; ?>> <?php echo t("table_days_left"); ?></label>
+          <label><input type="checkbox" name="columns_visible[]" value="status" <?php echo $is_visible("status") ? "checked" : ""; ?>> <?php echo t("table_status"); ?></label>
+          <label><input type="checkbox" name="columns_visible[]" value="email" <?php echo $is_visible("email") ? "checked" : ""; ?>> <?php echo t("table_email"); ?></label>
+          <label><input type="checkbox" name="columns_visible[]" value="project" <?php echo $is_visible("project") ? "checked" : ""; ?>> <?php echo t("table_project"); ?></label>
+        </div>
         <label class="auth-label" for="s-days"><?php echo t("label_alert_days"); ?></label>
         <input class="auth-input" id="s-days" name="alert_days" type="text" value="<?php echo htmlspecialchars(implode(", ", $config["alert_days"])); ?>">
         <button class="btn primary auth-button" type="submit"><?php echo t("save_options"); ?></button>
