@@ -1,12 +1,13 @@
 <?php
 $config = require __DIR__ . "/config.php";
 require_once __DIR__ . "/app/lib/auth.php";
+require_once __DIR__ . "/app/lib/url.php";
 require_once __DIR__ . "/app/lib/db.php";
 date_default_timezone_set($config["timezone"]);
 require_login($config);
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    header("Location: /index.php");
+    header("Location: " . url_for($config, "index.php"));
     exit;
 }
 
@@ -18,5 +19,5 @@ if ($domain !== "") {
     $stmt->execute([":d" => $domain, ":uid" => $uid]);
 }
 
-header("Location: /index.php");
+header("Location: " . url_for($config, "index.php"));
 exit;

@@ -1,12 +1,13 @@
 <?php
 $config = require __DIR__ . "/config.php";
 require_once __DIR__ . "/app/lib/auth.php";
+require_once __DIR__ . "/app/lib/url.php";
 require_once __DIR__ . "/app/lib/db.php";
 date_default_timezone_set($config["timezone"]);
 require_login($config);
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    header("Location: /index.php");
+    header("Location: " . url_for($config, "index.php"));
     exit;
 }
 
@@ -53,5 +54,5 @@ foreach ($updates as $k => $v) {
     $stmt->execute([":uid" => $uid, ":k" => $k, ":v" => $v]);
 }
 
-header("Location: /index.php");
+header("Location: " . url_for($config, "index.php"));
 exit;

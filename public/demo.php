@@ -2,6 +2,7 @@
 if (!isset($config)) {
     $config = require __DIR__ . "/config.php";
 }
+require_once __DIR__ . "/app/lib/url.php";
 require_once __DIR__ . "/app/lib/i18n.php";
 require_once __DIR__ . "/app/lib/logos.php";
 date_default_timezone_set($config["timezone"]);
@@ -52,13 +53,13 @@ if (!function_exists("registrar_site_url")) {
 
 $today = new DateTime("today");
 $demo_items = [
-    ["display" => "jsoncrack.com", "project" => "SaaS", "registrar" => "Cloudflare", "days" => 92, "email" => "hello@jsoncrack.com", "thumb" => "/public/thumbs/jsoncrack-com.png", "favicon" => "/public/favicons/jsoncrack-com.ico"],
-    ["display" => "pocketbase.io", "project" => "Backend", "registrar" => "Cloudflare", "days" => 75, "email" => "hello@pocketbase.io", "thumb" => "/public/thumbs/pocketbase-io.png", "favicon" => "/public/favicons/pocketbase-io.ico"],
-    ["display" => "nhost.io", "project" => "BaaS", "registrar" => "Cloudflare", "days" => 104, "email" => "hello@nhost.io", "thumb" => "/public/thumbs/nhost-io.png", "favicon" => "/public/favicons/nhost-io.ico"],
-    ["display" => "doublememory.com", "project" => "Agency", "registrar" => "OVH", "days" => 34, "email" => "contact@doublememory.com", "thumb" => "/public/thumbs/doublememory-com.png", "favicon" => "/public/favicons/doublememory-com.ico"],
-    ["display" => "hub.pouark.com", "project" => "App", "registrar" => "OVH", "days" => 21, "email" => "hello@pouark.com", "thumb" => "/public/thumbs/hub-pouark-com.png", "favicon" => "/public/favicons/pouark-com.ico"],
-    ["display" => "mondary.me", "project" => "Portfolio", "registrar" => "OVH", "days" => 14, "email" => "contact@mondary.me", "thumb" => "/public/thumbs/mondary-me.png", "favicon" => "/public/assets/demo-favicon.svg"],
-    ["display" => "gomining.com", "project" => "Crypto", "registrar" => "Namecheap", "days" => 48, "email" => "support@gomining.com", "thumb" => "/public/thumbs/gomining-com.png", "favicon" => "/public/favicons/gomining-com.ico"],
+    ["display" => "jsoncrack.com", "project" => "SaaS", "registrar" => "Cloudflare", "days" => 92, "email" => "hello@jsoncrack.com", "thumb" => "public/thumbs/jsoncrack-com.png", "favicon" => "public/favicons/jsoncrack-com.ico", "registrar_logo" => "public/logos/cloudflare-com.ico"],
+    ["display" => "pocketbase.io", "project" => "Backend", "registrar" => "Cloudflare", "days" => 75, "email" => "hello@pocketbase.io", "thumb" => "public/thumbs/pocketbase-io.png", "favicon" => "public/favicons/pocketbase-io.ico", "registrar_logo" => "public/logos/cloudflare-com.ico"],
+    ["display" => "nhost.io", "project" => "BaaS", "registrar" => "Cloudflare", "days" => 104, "email" => "hello@nhost.io", "thumb" => "public/thumbs/nhost-io.png", "favicon" => "public/favicons/nhost-io.ico", "registrar_logo" => "public/logos/cloudflare-com.ico"],
+    ["display" => "doublememory.com", "project" => "Agency", "registrar" => "OVH", "days" => 34, "email" => "contact@doublememory.com", "thumb" => "public/thumbs/doublememory-com.png", "favicon" => "public/favicons/doublememory-com.ico", "registrar_logo" => "public/logos/ovh-com.ico"],
+    ["display" => "hub.pouark.com", "project" => "App", "registrar" => "OVH", "days" => 21, "email" => "hello@pouark.com", "thumb" => "public/thumbs/hub-pouark-com.png", "favicon" => "public/favicons/pouark-com.ico", "registrar_logo" => "public/logos/ovh-com.ico"],
+    ["display" => "mondary.me", "project" => "Portfolio", "registrar" => "OVH", "days" => 14, "email" => "contact@mondary.me", "thumb" => "public/thumbs/mondary-me.png", "favicon" => "public/assets/demo-favicon.svg", "registrar_logo" => "public/logos/ovh-com.ico"],
+    ["display" => "gomining.com", "project" => "Crypto", "registrar" => "Namecheap", "days" => 48, "email" => "support@gomining.com", "thumb" => "public/thumbs/gomining-com.png", "favicon" => "public/favicons/gomining-com.ico", "registrar_logo" => "public/logos/namecheap-com.ico"],
 ];
 
 $domains = [];
@@ -86,7 +87,7 @@ foreach ($domains as $d) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?php echo htmlspecialchars($config["site_name"]); ?> - Démo</title>
-    <link rel="stylesheet" href="/public/assets/style.css">
+    <link rel="stylesheet" href="<?php echo htmlspecialchars(url_for($config, "public/assets/style.css")); ?>">
   </head>
   <body>
     <div class="topbar">
@@ -141,14 +142,14 @@ foreach ($domains as $d) {
               <tr>
                 <td class="domain-cell <?php echo $is_visible("domain") ? "" : "col-hidden"; ?>" data-col="domain" data-label="<?php echo t("table_domain"); ?>">
                   <span class="domain-media">
-                    <img class="thumb" src="<?php echo htmlspecialchars($d["thumb"] ?? "/public/assets/demo-thumb.svg"); ?>" alt="">
-                    <img class="favicon" src="<?php echo htmlspecialchars($d["favicon"] ?? "/public/assets/demo-favicon.svg"); ?>" alt="">
+                    <img class="thumb" src="<?php echo htmlspecialchars(url_for($config, $d["thumb"] ?? "public/assets/demo-thumb.svg")); ?>" alt="">
+                    <img class="favicon" src="<?php echo htmlspecialchars(url_for($config, $d["favicon"] ?? "public/assets/demo-favicon.svg")); ?>" alt="">
                   </span>
                   <span class="link"><?php echo htmlspecialchars($d["display"] ?? ""); ?></span>
                 </td>
                 <td class="<?php echo $is_visible("registrar") ? "" : "col-hidden"; ?>" data-col="registrar" data-label="<?php echo t("table_registrar"); ?>">
                   <div class="registrar">
-                    <img class="registrar-logo" src="/public/assets/demo-registrar.svg" alt="">
+                    <img class="registrar-logo" src="<?php echo htmlspecialchars(url_for($config, $d["registrar_logo"] ?? "public/assets/demo-registrar.svg")); ?>" alt="">
                     <span><?php echo htmlspecialchars($d["registrar"] ?? ""); ?></span>
                   </div>
                 </td>
@@ -184,18 +185,19 @@ foreach ($domains as $d) {
         <div class="drawer-title"><?php echo t("login_title"); ?></div>
         <button class="topbar-action" type="button" data-login-close><?php echo t("close"); ?></button>
       </div>
-      <form method="post" action="/public/login.php" class="drawer-body">
+      <form method="post" action="<?php echo htmlspecialchars(url_for($config, "public/login.php")); ?>" class="drawer-body">
         <label class="auth-label" for="demo-username"><?php echo t("label_username"); ?></label>
         <input class="auth-input" id="demo-username" name="username" type="text" autocomplete="username" required>
         <label class="auth-label" for="demo-password"><?php echo t("label_password"); ?></label>
         <input class="auth-input" id="demo-password" name="password" type="password" autocomplete="current-password" required>
         <button class="btn primary auth-button" type="submit"><?php echo t("login_button"); ?></button>
         <div class="auth-links">
-          <a class="link" href="/public/register.php"><?php echo t("register_link"); ?></a>
+          <a class="link" href="<?php echo htmlspecialchars(url_for($config, "public/register.php")); ?>"><?php echo t("register_link"); ?></a>
         </div>
       </form>
     </div>
 
+    <script>window.BASE_URL = "<?php echo htmlspecialchars(base_url($config)); ?>";</script>
     <script>
       (function () {
         const drawer = document.querySelector("[data-demo-drawer]");

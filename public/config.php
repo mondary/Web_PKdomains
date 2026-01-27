@@ -11,4 +11,5 @@ return [
     "version" => "1.9.4",
     "default_username" => "admin",
     "default_password" => "admin123",
+    "base_url" => "",
 ];

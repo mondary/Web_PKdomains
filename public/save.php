@@ -1,6 +1,7 @@
 <?php
 $config = require __DIR__ . "/config.php";
 require_once __DIR__ . "/app/lib/auth.php";
+require_once __DIR__ . "/app/lib/url.php";
 require_once __DIR__ . "/app/lib/db.php";
 require_once __DIR__ . "/app/lib/rdap.php";
 require_once __DIR__ . "/app/lib/logos.php";
@@ -9,7 +10,7 @@ date_default_timezone_set($config["timezone"]);
 require_login($config);
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    header("Location: /index.php");
+    header("Location: " . url_for($config, "index.php"));
     exit;
 }
 
@@ -24,7 +25,7 @@ $email = trim($_POST["email"] ?? "");
 $uid = (int)($_SESSION["user_id"] ?? 0);
 
 if ($domain === "") {
-    header("Location: /index.php");
+    header("Location: " . url_for($config, "index.php"));
     exit;
 }
 
@@ -76,5 +77,5 @@ try {
     // Silent fail: return to list
 }
 
-header("Location: /index.php");
+header("Location: " . url_for($config, "index.php"));
 exit;

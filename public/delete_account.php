@@ -1,6 +1,7 @@
 <?php
 $config = require __DIR__ . "/config.php";
 require_once __DIR__ . "/app/lib/auth.php";
+require_once __DIR__ . "/app/lib/url.php";
 require_once __DIR__ . "/app/lib/db.php";
 require_once __DIR__ . "/app/lib/i18n.php";
 require_once __DIR__ . "/app/lib/users.php";
@@ -8,7 +9,7 @@ date_default_timezone_set($config["timezone"]);
 require_login($config);
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    header("Location: /index.php");
+    header("Location: " . url_for($config, "index.php"));
     exit;
 }
 
@@ -19,14 +20,14 @@ $GLOBALS["i18n"] = i18n_load($config["language"] ?? "fr");
 
 $current = $_POST["current_password"] ?? "";
 if ($current === "") {
-    header("Location: /index.php");
+    header("Location: " . url_for($config, "index.php"));
     exit;
 }
 
 $username = $_SESSION["username"] ?? "";
 $user = $username ? find_user($db, $username) : null;
 if (!$user || !password_verify($current, $user["password_hash"])) {
-    header("Location: /index.php");
+    header("Location: " . url_for($config, "index.php"));
     exit;
 }
 
@@ -40,5 +41,5 @@ $stmt->execute([":uid" => $uid]);
 
 session_unset();
 session_destroy();
-header("Location: /public/login.php");
+header("Location: " . url_for($config, "public/login.php"));
 exit;

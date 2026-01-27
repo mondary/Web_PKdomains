@@ -1,16 +1,17 @@
 <?php
 $config = require __DIR__ . "/config.php";
+require_once __DIR__ . "/app/lib/url.php";
 require_once __DIR__ . "/app/lib/db.php";
 require_once __DIR__ . "/app/lib/i18n.php";
 date_default_timezone_set($config["timezone"]);
 
 session_start();
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    header("Location: /index.php");
+    header("Location: " . url_for($config, "index.php"));
     exit;
 }
 if (isset($_SESSION["user_id"])) {
-    header("Location: /index.php");
+    header("Location: " . url_for($config, "index.php"));
     exit;
 }
 
@@ -31,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if ($user && password_verify($password, $user["password_hash"])) {
             $_SESSION["user_id"] = $user["id"];
             $_SESSION["username"] = $username;
-            header("Location: /index.php");
+            header("Location: " . url_for($config, "index.php"));
             exit;
         }
         $error = t("login_error_invalid");
@@ -44,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?php echo htmlspecialchars($config["site_name"]); ?> - <?php echo t("login_title"); ?></title>
-    <link rel="stylesheet" href="/public/assets/style.css">
+    <link rel="stylesheet" href="<?php echo htmlspecialchars(url_for($config, "public/assets/style.css")); ?>">
   </head>
   <body>
     <div class="container">
@@ -68,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
           <button class="btn primary auth-button" type="submit"><?php echo t("login_button"); ?></button>
         </form>
         <div class="auth-links">
-          <a class="link" href="/public/register.php"><?php echo t("register_link"); ?></a>
+          <a class="link" href="<?php echo htmlspecialchars(url_for($config, "public/register.php")); ?>"><?php echo t("register_link"); ?></a>
         </div>
       </div>
     </div>
