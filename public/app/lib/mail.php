@@ -136,6 +136,94 @@ function smtp_send_mail(array $config, string $to, string $from, string $subject
     return true;
 }
 
+function smtp_send_mail_raw(array $config, string $to, string $from, string $raw): bool {
+    $host = $config["smtp_host"] ?? "";
+    $port = (int)($config["smtp_port"] ?? 587);
+    $user = $config["smtp_user"] ?? "";
+    $pass = $config["smtp_pass"] ?? "";
+    $secure = strtolower((string)($config["smtp_secure"] ?? "starttls"));
+
+    if ($host === "" || $user === "" || $pass === "") {
+        set_mail_error("SMTP credentials missing");
+        return false;
+    }
+
+    $fp = stream_socket_client("tcp://{$host}:{$port}", $errno, $errstr, 20);
+    if (!$fp) {
+        set_mail_error("SMTP connect failed: {$errstr}");
+        return false;
+    }
+    stream_set_timeout($fp, 20);
+
+    $greet = smtp_read_line($fp);
+    if ($greet === "") {
+        set_mail_error("SMTP no greeting");
+        fclose($fp);
+        return false;
+    }
+
+    if (!smtp_send($fp, "EHLO localhost", 250)) {
+        fclose($fp);
+        return false;
+    }
+
+    if ($secure === "starttls") {
+        if (!smtp_send($fp, "STARTTLS", 220)) {
+            fclose($fp);
+            return false;
+        }
+        if (!stream_socket_enable_crypto($fp, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
+            set_mail_error("SMTP STARTTLS failed");
+            fclose($fp);
+            return false;
+        }
+        if (!smtp_send($fp, "EHLO localhost", 250)) {
+            fclose($fp);
+            return false;
+        }
+    }
+
+    if (!smtp_send($fp, "AUTH LOGIN", 334)) {
+        fclose($fp);
+        return false;
+    }
+    if (!smtp_send($fp, base64_encode($user), 334)) {
+        fclose($fp);
+        return false;
+    }
+    if (!smtp_send($fp, base64_encode($pass), 235)) {
+        fclose($fp);
+        return false;
+    }
+
+    if (!smtp_send($fp, "MAIL FROM:<{$from}>", 250)) {
+        fclose($fp);
+        return false;
+    }
+    if (!smtp_send($fp, "RCPT TO:<{$to}>", 250)) {
+        fclose($fp);
+        return false;
+    }
+
+    if (!smtp_send($fp, "DATA", 354)) {
+        fclose($fp);
+        return false;
+    }
+
+    $payload = str_replace("\n.", "\n..", $raw);
+    fwrite($fp, $payload . "\r\n.\r\n");
+    $resp = smtp_read_line($fp);
+    if (!preg_match('/^250 /', $resp)) {
+        set_mail_error("SMTP data rejected: {$resp}");
+        fclose($fp);
+        return false;
+    }
+
+    smtp_send($fp, "QUIT", 221);
+    fclose($fp);
+    return true;
+}
+
 function send_mail(array $config, string $to, string $from, string $subject, string $message): bool {
     set_mail_error("");
     $use_smtp = !empty($config["smtp_host"]);
@@ -144,6 +232,41 @@ function send_mail(array $config, string $to, string $from, string $subject, str
     }
     $headers = "From: {$from}\r\nReply-To: {$from}\r\n";
     $ok = mail($to, $subject, $message, $headers);
+    if (!$ok) {
+        set_mail_error("mail() failed");
+    }
+    return $ok;
+}
+
+function send_mail_html(array $config, string $to, string $from, string $subject, string $html, string $text = ""): bool {
+    set_mail_error("");
+    $boundary = "b" . md5((string)microtime(true));
+    $headers = [];
+    $headers[] = "From: {$from}";
+    $headers[] = "To: {$to}";
+    $headers[] = "Subject: {$subject}";
+    $headers[] = "MIME-Version: 1.0";
+    $headers[] = "Content-Type: multipart/alternative; boundary=\"{$boundary}\"";
+
+    $alt = [];
+    $alt[] = "--{$boundary}";
+    $alt[] = "Content-Type: text/plain; charset=UTF-8";
+    $alt[] = "";
+    $alt[] = $text !== "" ? $text : strip_tags($html);
+    $alt[] = "--{$boundary}";
+    $alt[] = "Content-Type: text/html; charset=UTF-8";
+    $alt[] = "";
+    $alt[] = $html;
+    $alt[] = "--{$boundary}--";
+
+    $body = implode("\r\n", $headers) . "\r\n\r\n" . implode("\r\n", $alt);
+
+    $use_smtp = !empty($config["smtp_host"]);
+    if ($use_smtp) {
+        return smtp_send_mail_raw($config, $to, $from, $body);
+    }
+
+    $ok = mail($to, $subject, implode("\r\n", $alt), implode("\r\n", $headers));
     if (!$ok) {
         set_mail_error("mail() failed");
     }

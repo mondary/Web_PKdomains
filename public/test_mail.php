@@ -23,10 +23,20 @@ if ($to === "" || $from === "") {
 }
 
 $subject = ($config["mail_subject_prefix"] ?? "") . "Test notification";
-$message = "This is a test notification from Domain Manager.\n";
-$message .= "Time: " . (new DateTime())->format("Y-m-d H:i:s") . "\n";
+$time = (new DateTime())->format("Y-m-d H:i:s");
+$text = "Test notification\n\nTime: {$time}\nTo: {$to}\nFrom: {$from}\n";
+$html = "<div style=\"font-family:Arial,Helvetica,sans-serif; color:#0f172a;\">\n";
+$html .= "<h2 style=\"margin:0 0 10px;\">Test notification</h2>\n";
+$html .= "<p style=\"margin:0 0 14px; color:#475569;\">This is a test message from Domain Manager.</p>\n";
+$html .= "<table style=\"border-collapse:collapse; font-size:14px;\">\n";
+$html .= "<tr><td style=\"padding:6px 10px; color:#64748b;\">Time</td><td style=\"padding:6px 10px;\">{$time}</td></tr>\n";
+$html .= "<tr><td style=\"padding:6px 10px; color:#64748b;\">To</td><td style=\"padding:6px 10px;\">{$to}</td></tr>\n";
+$html .= "<tr><td style=\"padding:6px 10px; color:#64748b;\">From</td><td style=\"padding:6px 10px;\">{$from}</td></tr>\n";
+$html .= "</table>\n";
+$html .= "<p style=\"margin:16px 0 0; color:#94a3b8; font-size:12px;\">If you received this email, SMTP is configured correctly.</p>\n";
+$html .= "</div>";
 
-$ok = send_mail($config, $to, $from, $subject, $message);
+$ok = send_mail_html($config, $to, $from, $subject, $html, $text);
 $error = $ok ? "" : mail_last_error();
 
 echo json_encode(["ok" => $ok, "to" => $to, "error" => $error]);
