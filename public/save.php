@@ -21,6 +21,7 @@ $registrar = trim($_POST["registrar"] ?? "");
 $expires = trim($_POST["expires"] ?? "");
 $status = trim($_POST["status"] ?? "Active");
 $email = trim($_POST["email"] ?? "");
+$uid = (int)($_SESSION["user_id"] ?? 0);
 
 if ($domain === "") {
     header("Location: index.php");
@@ -41,7 +42,7 @@ if ($registrar === "" || $expires === "") {
 
 try {
     if ($original !== "") {
-        $stmt = $db->prepare("UPDATE domains SET domain = :d, project = :p, registrar = :r, expires = :e, status = :s, email = :m WHERE domain = :od");
+        $stmt = $db->prepare("UPDATE domains SET domain = :d, project = :p, registrar = :r, expires = :e, status = :s, email = :m WHERE domain = :od AND user_id = :uid");
         $stmt->execute([
             ":d" => $domain,
             ":p" => $project,
@@ -50,10 +51,12 @@ try {
             ":s" => $status,
             ":m" => $email,
             ":od" => $original,
+            ":uid" => $uid,
         ]);
     } else {
-        $stmt = $db->prepare("INSERT INTO domains (domain, project, registrar, expires, status, email) VALUES (:d, :p, :r, :e, :s, :m)");
+        $stmt = $db->prepare("INSERT INTO domains (user_id, domain, project, registrar, expires, status, email) VALUES (:uid, :d, :p, :r, :e, :s, :m)");
         $stmt->execute([
+            ":uid" => $uid,
             ":d" => $domain,
             ":p" => $project,
             ":r" => $registrar,

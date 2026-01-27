@@ -13,8 +13,9 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 $domain = trim($_POST["domain"] ?? "");
 if ($domain !== "") {
     $db = get_db($config);
-    $stmt = $db->prepare("DELETE FROM domains WHERE domain = :d");
-    $stmt->execute([":d" => $domain]);
+    $uid = (int)($_SESSION["user_id"] ?? 0);
+    $stmt = $db->prepare("DELETE FROM domains WHERE domain = :d AND user_id = :uid");
+    $stmt->execute([":d" => $domain, ":uid" => $uid]);
 }
 
 header("Location: index.php");

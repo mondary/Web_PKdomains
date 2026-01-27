@@ -11,6 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 }
 
 $db = get_db($config);
+$uid = (int)($_SESSION["user_id"] ?? 0);
 
 $site_name = trim($_POST["site_name"] ?? $config["site_name"]);
 $email_to = trim($_POST["email_to"] ?? $config["email_to"]);
@@ -47,9 +48,9 @@ $updates = [
     "columns_visible" => json_encode(array_values($columns_visible)),
 ];
 
-$stmt = $db->prepare("INSERT OR REPLACE INTO settings (key, value) VALUES (:k, :v)");
+$stmt = $db->prepare("INSERT OR REPLACE INTO settings (user_id, key, value) VALUES (:uid, :k, :v)");
 foreach ($updates as $k => $v) {
-    $stmt->execute([":k" => $k, ":v" => $v]);
+    $stmt->execute([":uid" => $uid, ":k" => $k, ":v" => $v]);
 }
 
 header("Location: index.php");

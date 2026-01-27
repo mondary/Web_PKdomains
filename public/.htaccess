@@ -1,0 +1,14 @@
+Options -Indexes
+
+# Block access to hidden files
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>
+
+# Block accidental access to data or secrets if placed in web root
+RedirectMatch 404 ^/(data|secrets)/
+
+# Block direct access to database-like files
+<FilesMatch "\.(sqlite|db|json)$">
+  Require all denied
+</FilesMatch>

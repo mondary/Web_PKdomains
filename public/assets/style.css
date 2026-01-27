@@ -233,9 +233,18 @@ body {
   font-weight: 700;
   font-size: 18px;
 }
-.drawer-body {
+.drawer {
   overflow: auto;
+}
+.drawer-body {
+  overflow: visible;
   padding-right: 6px;
+}
+.drawer-section {
+  padding-right: 6px;
+}
+.account-section {
+  margin-top: 18px;
 }
 .drawer-footer {
   border-top: 1px solid var(--line);
@@ -353,6 +362,11 @@ kbd {
   color: #fff;
   border: none;
 }
+.btn.danger {
+  background: #ef4444;
+  color: #fff;
+  border: none;
+}
 
 .table-card {
   background: var(--card);
@@ -360,6 +374,11 @@ kbd {
   border-radius: 16px;
   box-shadow: var(--shadow);
   overflow: hidden;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
 }
 tbody tr:focus {
   outline: 2px solid var(--primary);
@@ -465,6 +484,31 @@ tbody tr {
   padding: 10px 12px;
   font-size: 14px;
 }
+.date-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.date-input {
+  padding-right: 38px;
+}
+.date-btn {
+  position: absolute;
+  right: 6px;
+  border: 1px solid var(--line);
+  background: #f1f4f8;
+  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+}
+.date-native {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}
 .auth-button {
   width: 100%;
   margin-top: 14px;
@@ -483,6 +527,10 @@ tbody tr {
   font-size: 13px;
   margin-bottom: 8px;
 }
+.auth-links {
+  margin-top: 10px;
+  font-size: 12px;
+}
 .checkbox-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -497,5 +545,6 @@ tbody tr {
 @media (max-width: 900px) {
   .controls { grid-template-columns: 1fr; }
   .nav { display: none; }
-  table { font-size: 13px; }
+  .table-card { overflow-x: auto; }
+  table { font-size: 13px; min-width: 900px; }
 }

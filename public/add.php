@@ -23,8 +23,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $error = t("error_domain_required");
     } else {
         try {
-            $stmt = $db->prepare("INSERT INTO domains (domain, project, registrar, expires, status, email) VALUES (:d, :p, :r, :e, :s, :m)");
+            $uid = (int)($_SESSION["user_id"] ?? 0);
+            $stmt = $db->prepare("INSERT INTO domains (user_id, domain, project, registrar, expires, status, email) VALUES (:uid, :d, :p, :r, :e, :s, :m)");
             $stmt->execute([
+                ":uid" => $uid,
                 ":d" => $domain,
                 ":p" => $project,
                 ":r" => $registrar,
@@ -66,7 +68,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
           <label class="auth-label" for="registrar"><?php echo t("label_registrar"); ?></label>
           <input class="auth-input" id="registrar" name="registrar" type="text" data-field-registrar>
           <label class="auth-label" for="expires"><?php echo t("label_expiration"); ?></label>
-          <input class="auth-input" id="expires" name="expires" type="text" inputmode="numeric" maxlength="10" placeholder="YYYY-MM-DD" data-field-expires pattern="^\\d{4}-\\d{2}-\\d{2}$" title="YYYY-MM-DD">
+          <div class="date-wrap">
+            <input class="auth-input date-input" id="expires" name="expires" type="text" inputmode="numeric" maxlength="10" placeholder="YYYY-MM-DD" data-field-expires data-date-mask>
+            <button class="date-btn" type="button" data-date-btn aria-label="<?php echo t("open_datepicker"); ?>">📅</button>
+            <input class="date-native" type="date" tabindex="-1" aria-hidden="true">
+          </div>
           <label class="auth-label" for="status"><?php echo t("label_status"); ?></label>
           <input class="auth-input" id="status" name="status" type="text" value="Active">
           <label class="auth-label" for="email"><?php echo t("label_email"); ?></label>

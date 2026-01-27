@@ -5,17 +5,21 @@ require_once __DIR__ . "/../app/lib/db.php";
 require_once __DIR__ . "/../app/lib/i18n.php";
 require_once __DIR__ . "/../app/lib/logos.php";
 require_once __DIR__ . "/../app/lib/thumbs.php";
+require_once __DIR__ . "/../app/lib/users.php";
 date_default_timezone_set($config["timezone"]);
 require_login($config);
 
 $db = get_db($config);
-$config = apply_settings($db, $config);
+$uid = (int)($_SESSION["user_id"] ?? 0);
+$config = apply_settings($db, $config, $uid);
 $GLOBALS["i18n"] = i18n_load($config["language"] ?? "fr");
 $visible_cols = $config["columns_visible"] ?? ["domain", "registrar", "expiration", "days", "status", "email", "project"];
 $is_visible = function ($key) use ($visible_cols) {
     return in_array($key, $visible_cols, true);
 };
-$domains = $db->query("SELECT domain, project, registrar, expires, status, email FROM domains ORDER BY domain ASC")->fetchAll();
+$stmt = $db->prepare("SELECT domain, project, registrar, expires, status, email FROM domains WHERE user_id = :uid ORDER BY domain ASC");
+$stmt->execute([":uid" => $uid]);
+$domains = $stmt->fetchAll();
 
 function days_until($date) {
     $today = new DateTime("today");
@@ -215,7 +219,11 @@ foreach ($domains as $d) {
         <label class="auth-label" for="d-registrar"><?php echo t("label_registrar"); ?></label>
         <input class="auth-input" id="d-registrar" name="registrar" type="text" data-field-registrar>
         <label class="auth-label" for="d-expires"><?php echo t("label_expiration"); ?></label>
-        <input class="auth-input" id="d-expires" name="expires" type="text" inputmode="numeric" maxlength="10" placeholder="YYYY-MM-DD" data-field-expires pattern="^\\d{4}-\\d{2}-\\d{2}$" title="YYYY-MM-DD">
+        <div class="date-wrap">
+          <input class="auth-input date-input" id="d-expires" name="expires" type="text" inputmode="numeric" maxlength="10" placeholder="YYYY-MM-DD" data-field-expires data-date-mask>
+          <button class="date-btn" type="button" data-date-btn aria-label="<?php echo t("open_datepicker"); ?>">📅</button>
+          <input class="date-native" type="date" tabindex="-1" aria-hidden="true">
+        </div>
         <label class="auth-label" for="d-status"><?php echo t("label_status"); ?></label>
         <input class="auth-input" id="d-status" name="status" type="text" value="Active">
         <label class="auth-label" for="d-email"><?php echo t("label_email"); ?></label>
@@ -232,9 +240,7 @@ foreach ($domains as $d) {
         <div class="drawer-title"><?php echo t("options_title"); ?></div>
         <button class="topbar-action" type="button" data-settings-close><?php echo t("close"); ?></button>
       </div>
-      <form method="post" action="settings.php" class="drawer-body">
-        <label class="auth-label" for="s-site"><?php echo t("label_site_name"); ?></label>
-        <input class="auth-input" id="s-site" name="site_name" type="text" value="<?php echo htmlspecialchars($config["site_name"]); ?>">
+      <form method="post" action="settings.php" class="drawer-section">
         <label class="auth-label" for="s-email-to"><?php echo t("label_email_to"); ?></label>
         <input class="auth-input" id="s-email-to" name="email_to" type="email" value="<?php echo htmlspecialchars($config["email_to"]); ?>">
         <label class="auth-label" for="s-email-from"><?php echo t("label_email_from"); ?></label>
@@ -259,6 +265,24 @@ foreach ($domains as $d) {
         <label class="auth-label" for="s-days"><?php echo t("label_alert_days"); ?></label>
         <input class="auth-input" id="s-days" name="alert_days" type="text" value="<?php echo htmlspecialchars(implode(", ", $config["alert_days"])); ?>">
         <button class="btn primary auth-button" type="submit"><?php echo t("save_options"); ?></button>
+      </form>
+      <form method="post" action="password.php" class="drawer-section account-section">
+        <div class="auth-title"><?php echo t("account_title"); ?></div>
+        <label class="auth-label" for="p-username"><?php echo t("label_new_username"); ?></label>
+        <input class="auth-input" id="p-username" name="new_username" type="text" autocomplete="username" placeholder="<?php echo htmlspecialchars($_SESSION["username"] ?? ""); ?>">
+        <label class="auth-label" for="p-current"><?php echo t("label_current_password"); ?></label>
+        <input class="auth-input" id="p-current" name="current_password" type="password" autocomplete="current-password" required>
+        <label class="auth-label" for="p-new"><?php echo t("label_new_password"); ?></label>
+        <input class="auth-input" id="p-new" name="new_password" type="password" autocomplete="new-password" required>
+        <label class="auth-label" for="p-confirm"><?php echo t("label_password_confirm"); ?></label>
+        <input class="auth-input" id="p-confirm" name="password_confirm" type="password" autocomplete="new-password" required>
+        <button class="btn primary auth-button" type="submit"><?php echo t("save"); ?></button>
+      </form>
+      <form method="post" action="delete_account.php" class="drawer-section account-section">
+        <div class="auth-title"><?php echo t("delete_account_title"); ?></div>
+        <label class="auth-label" for="da-current"><?php echo t("label_current_password"); ?></label>
+        <input class="auth-input" id="da-current" name="current_password" type="password" autocomplete="current-password" required>
+        <button class="btn danger auth-button" type="submit" onclick="return confirm('<?php echo t("delete_account_confirm"); ?>');"><?php echo t("delete_account_button"); ?></button>
       </form>
     </div>
     <script>

@@ -268,18 +268,59 @@ const openDrawer = (mode, data = {}) => {
   }
 };
 
-const formatDateInput = (inputEl) => {
-  if (!inputEl) return;
+const formatDateValue = (raw) => {
+  let v = raw.replace(/[^\d]/g, "").slice(0, 8);
+  if (v.length >= 5) v = v.slice(0, 4) + "-" + v.slice(4);
+  if (v.length >= 8) v = v.slice(0, 7) + "-" + v.slice(7);
+  return v;
+};
+
+const setupDateInput = (wrap) => {
+  const inputEl = wrap.querySelector(".date-input");
+  const nativeEl = wrap.querySelector(".date-native");
+  const btn = wrap.querySelector("[data-date-btn]");
+  if (!inputEl || !nativeEl) return;
+
   inputEl.addEventListener("input", () => {
-    let v = inputEl.value.replace(/[^\d]/g, "").slice(0, 8);
-    if (v.length >= 5) v = v.slice(0, 4) + "-" + v.slice(4);
-    if (v.length >= 8) v = v.slice(0, 7) + "-" + v.slice(7);
-    inputEl.value = v;
+    inputEl.value = formatDateValue(inputEl.value);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(inputEl.value)) {
+      nativeEl.value = inputEl.value;
+    }
+  });
+
+  if (btn) {
+    btn.addEventListener("click", () => {
+      if (typeof nativeEl.showPicker === "function") {
+        nativeEl.showPicker();
+      } else {
+        nativeEl.focus();
+        nativeEl.click();
+      }
+    });
+  }
+
+  nativeEl.addEventListener("change", () => {
+    if (nativeEl.value) {
+      inputEl.value = nativeEl.value;
+    }
   });
 };
 
-formatDateInput(document.querySelector("#d-expires"));
-formatDateInput(document.querySelector("#expires"));
+document.querySelectorAll(".date-wrap").forEach(setupDateInput);
+
+document.querySelectorAll("form").forEach((form) => {
+  form.addEventListener("submit", (e) => {
+    const dateInputs = form.querySelectorAll(".date-input");
+    for (const el of dateInputs) {
+      if (el.value && !/^\d{4}-\d{2}-\d{2}$/.test(el.value)) {
+        e.preventDefault();
+        el.focus();
+        el.select();
+        return;
+      }
+    }
+  });
+});
 
 const closeDrawer = () => {
   if (!drawer || !drawerBackdrop) return;

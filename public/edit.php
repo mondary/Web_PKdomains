@@ -12,8 +12,9 @@ $GLOBALS["i18n"] = i18n_load($config["language"] ?? "fr");
 $error = "";
 
 $domain_param = $_GET["domain"] ?? "";
-$stmt = $db->prepare("SELECT * FROM domains WHERE domain = :d");
-$stmt->execute([":d" => $domain_param]);
+$uid = (int)($_SESSION["user_id"] ?? 0);
+$stmt = $db->prepare("SELECT * FROM domains WHERE domain = :d AND user_id = :uid");
+$stmt->execute([":d" => $domain_param, ":uid" => $uid]);
 $row = $stmt->fetch();
 if (!$row) {
     header("Location: index.php");
@@ -32,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $error = t("error_domain_required");
     } else {
         try {
-            $stmt = $db->prepare("UPDATE domains SET domain = :d, project = :p, registrar = :r, expires = :e, status = :s, email = :m WHERE id = :id");
+            $stmt = $db->prepare("UPDATE domains SET domain = :d, project = :p, registrar = :r, expires = :e, status = :s, email = :m WHERE id = :id AND user_id = :uid");
             $stmt->execute([
                 ":d" => $domain,
                 ":p" => $project,
@@ -41,6 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 ":s" => $status,
                 ":m" => $email,
                 ":id" => $row["id"],
+                ":uid" => $uid,
             ]);
             header("Location: index.php");
             exit;
@@ -74,7 +76,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
           <label class="auth-label" for="registrar"><?php echo t("label_registrar"); ?></label>
           <input class="auth-input" id="registrar" name="registrar" type="text" value="<?php echo htmlspecialchars($row["registrar"] ?? ""); ?>">
           <label class="auth-label" for="expires"><?php echo t("label_expiration"); ?></label>
-          <input class="auth-input" id="expires" name="expires" type="text" inputmode="numeric" maxlength="10" placeholder="YYYY-MM-DD" pattern="^\\d{4}-\\d{2}-\\d{2}$" title="YYYY-MM-DD" value="<?php echo htmlspecialchars($row["expires"] ?? ""); ?>">
+          <div class="date-wrap">
+            <input class="auth-input date-input" id="expires" name="expires" type="text" inputmode="numeric" maxlength="10" placeholder="YYYY-MM-DD" data-date-mask value="<?php echo htmlspecialchars($row["expires"] ?? ""); ?>">
+            <button class="date-btn" type="button" data-date-btn aria-label="<?php echo t("open_datepicker"); ?>">📅</button>
+            <input class="date-native" type="date" tabindex="-1" aria-hidden="true">
+          </div>
           <label class="auth-label" for="status"><?php echo t("label_status"); ?></label>
           <input class="auth-input" id="status" name="status" type="text" value="<?php echo htmlspecialchars($row["status"] ?? "Active"); ?>">
           <label class="auth-label" for="email"><?php echo t("label_email"); ?></label>
