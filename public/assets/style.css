@@ -68,6 +68,25 @@ body {
 .actions {
   white-space: nowrap;
 }
+.registrar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.registrar-logo {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  object-fit: contain;
+  background: #fff;
+  border: 1px solid var(--line);
+}
+.icon {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  fill: currentColor;
+}
 .inline {
   display: inline;
 }
@@ -109,6 +128,11 @@ body {
 .drawer-body {
   overflow: auto;
   padding-right: 6px;
+}
+.drawer-footer {
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+  margin-top: 12px;
 }
 .drawer.open {
   transform: translateX(0);

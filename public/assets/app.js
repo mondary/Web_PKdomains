@@ -53,6 +53,7 @@ const form = drawer ? drawer.querySelector("form") : null;
 
 const openDrawer = (mode, data = {}) => {
   if (!drawer || !drawerBackdrop || !form) return;
+  const deleteForm = drawer.querySelector(".drawer-footer");
   drawer.classList.add("open");
   drawerBackdrop.classList.add("open");
   if (drawerTitle) drawerTitle.textContent = mode === "edit" ? "Edit domain" : "Add domain";
@@ -63,6 +64,11 @@ const openDrawer = (mode, data = {}) => {
   form.querySelector("#d-expires").value = data.expires || "";
   form.querySelector("#d-status").value = data.status || "Active";
   form.querySelector("#d-email").value = data.email || "";
+  if (deleteForm) {
+    deleteForm.style.display = mode === "edit" ? "block" : "none";
+    const delInput = deleteForm.querySelector("input[name='domain']");
+    if (delInput) delInput.value = data.domain || "";
+  }
 };
 
 const closeDrawer = () => {

@@ -25,6 +25,29 @@ function status_class($days) {
     return "ok";
 }
 
+function registrar_logo_url($registrar) {
+    $r = strtolower(trim((string)$registrar));
+    if ($r === "") return null;
+    $map = [
+        "ovh" => "ovh.com",
+        "ovh sas" => "ovh.com",
+        "spaceship" => "spaceship.com",
+        "spaceship, inc." => "spaceship.com",
+        "key-systems" => "key-systems.net",
+        "key-systems gmbh" => "key-systems.net",
+        "namecheap" => "namecheap.com",
+        "godaddy" => "godaddy.com",
+        "gandi" => "gandi.net",
+        "cloudflare" => "cloudflare.com",
+    ];
+    foreach ($map as $key => $domain) {
+        if (strpos($r, $key) !== false) {
+            return "https://logo.clearbit.com/" . $domain;
+        }
+    }
+    return null;
+}
+
 $total = count($domains);
 $expiring = 0;
 foreach ($domains as $d) {
@@ -93,7 +116,15 @@ foreach ($domains as $d) {
               <tr>
                 <td><strong><?php echo htmlspecialchars($d["domain"] ?? ""); ?></strong></td>
                 <td class="muted"><?php echo htmlspecialchars($d["project"] ?? ""); ?></td>
-                <td><?php echo htmlspecialchars($d["registrar"] ?? ""); ?></td>
+                <td>
+                  <div class="registrar">
+                    <?php $logo = registrar_logo_url($d["registrar"] ?? ""); ?>
+                    <?php if ($logo): ?>
+                      <img class="registrar-logo" src="<?php echo htmlspecialchars($logo); ?>" alt="">
+                    <?php endif; ?>
+                    <span><?php echo htmlspecialchars($d["registrar"] ?? ""); ?></span>
+                  </div>
+                </td>
                 <td><?php echo htmlspecialchars($d["expires"] ?? ""); ?></td>
                 <td><?php echo $days === null ? "—" : $days; ?></td>
                 <td><span class="pill <?php echo status_class($days); ?>">
@@ -114,11 +145,9 @@ foreach ($domains as $d) {
                     data-expires="<?php echo htmlspecialchars($d["expires"] ?? ""); ?>"
                     data-status="<?php echo htmlspecialchars($d["status"] ?? ""); ?>"
                     data-email="<?php echo htmlspecialchars($d["email"] ?? ""); ?>"
-                  >Edit</button>
-                  <form method="post" action="delete.php" class="inline">
-                    <input type="hidden" name="domain" value="<?php echo htmlspecialchars($d["domain"] ?? ""); ?>">
-                    <button class="link danger" type="submit" onclick="return confirm('Delete this domain?');">Delete</button>
-                  </form>
+                  title="Edit" aria-label="Edit">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" aria-hidden="true" focusable="false"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M416.9 85.2L372 130.1L509.9 268L554.8 223.1C568.4 209.6 576 191.2 576 172C576 152.8 568.4 134.4 554.8 120.9L519.1 85.2C505.6 71.6 487.2 64 468 64C448.8 64 430.4 71.6 416.9 85.2zM338.1 164L122.9 379.1C112.2 389.8 104.4 403.2 100.3 417.8L64.9 545.6C62.6 553.9 64.9 562.9 71.1 569C77.3 575.1 86.2 577.5 94.5 575.2L222.3 539.7C236.9 535.6 250.2 527.9 261 517.1L476 301.9L338.1 164z"/></svg>
+                  </button>
                 </td>
               </tr>
             <?php endforeach; ?>
@@ -153,6 +182,10 @@ foreach ($domains as $d) {
         <label class="auth-label" for="d-email">Alert email (optional)</label>
         <input class="auth-input" id="d-email" name="email" type="email">
         <button class="btn primary auth-button" type="submit">Save</button>
+      </form>
+      <form method="post" action="delete.php" class="drawer-footer">
+        <input type="hidden" name="domain" value="">
+        <button class="link danger" type="submit" onclick="return confirm('Delete this domain?');">Delete this domain</button>
       </form>
     </div>
     <script src="assets/app.js"></script>

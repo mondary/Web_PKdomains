@@ -2,6 +2,7 @@
 $config = require __DIR__ . "/../config.php";
 require_once __DIR__ . "/../app/lib/auth.php";
 require_once __DIR__ . "/../app/lib/db.php";
+require_once __DIR__ . "/../app/lib/rdap.php";
 date_default_timezone_set($config["timezone"]);
 require_login($config);
 
@@ -22,6 +23,18 @@ $email = trim($_POST["email"] ?? "");
 if ($domain === "") {
     header("Location: index.php");
     exit;
+}
+
+if ($registrar === "" || $expires === "") {
+    $rdap = rdap_lookup($config, $domain);
+    if ($rdap["ok"] ?? false) {
+        if ($registrar === "" && !empty($rdap["registrar"])) {
+            $registrar = $rdap["registrar"];
+        }
+        if ($expires === "" && !empty($rdap["expiration"])) {
+            $expires = $rdap["expiration"];
+        }
+    }
 }
 
 try {
