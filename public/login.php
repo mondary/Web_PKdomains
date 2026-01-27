@@ -1,6 +1,7 @@
 <?php
 $config = require __DIR__ . "/../config.php";
 require_once __DIR__ . "/../app/lib/db.php";
+require_once __DIR__ . "/../app/lib/i18n.php";
 date_default_timezone_set($config["timezone"]);
 
 session_start();
@@ -9,14 +10,17 @@ if (isset($_SESSION["user_id"])) {
     exit;
 }
 
+$db = get_db($config);
+$config = apply_settings($db, $config);
+$GLOBALS["i18n"] = i18n_load($config["language"] ?? "fr");
+
 $error = "";
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $username = trim($_POST["username"] ?? "");
     $password = $_POST["password"] ?? "";
     if ($username === "" || $password === "") {
-        $error = "Please enter your username and password.";
+        $error = t("login_error_empty");
     } else {
-        $db = get_db($config);
         $stmt = $db->prepare("SELECT id, password_hash FROM users WHERE username = :u");
         $stmt->execute([":u" => $username]);
         $user = $stmt->fetch();
@@ -26,16 +30,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             header("Location: index.php");
             exit;
         }
-        $error = "Invalid credentials.";
+        $error = t("login_error_invalid");
     }
 }
 ?>
 <!doctype html>
-<html lang="fr">
+<html lang="<?php echo htmlspecialchars($config["language"] ?? "fr"); ?>">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?php echo htmlspecialchars($config["site_name"]); ?> - Login</title>
+    <title><?php echo htmlspecialchars($config["site_name"]); ?> - <?php echo t("login_title"); ?></title>
     <link rel="stylesheet" href="assets/style.css">
   </head>
   <body>
@@ -43,21 +47,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       <?php
         $db_ok = is_writable(dirname($config["db_path"])) || is_file($config["db_path"]);
         if (!$db_ok) {
-          echo '<div class="auth-error">SQLite: dossier secrets/data/ non inscriptible. Donne les droits d\'écriture.</div>';
+          echo '<div class="auth-error">' . htmlspecialchars(t("login_sqlite_perm")) . '</div>';
         }
       ?>
       <div class="auth-card">
-        <div class="auth-title">Sign in</div>
-        <div class="auth-subtitle">Use your account to access the dashboard.</div>
+        <div class="auth-title"><?php echo t("login_title"); ?></div>
+        <div class="auth-subtitle"><?php echo t("login_subtitle"); ?></div>
         <?php if ($error): ?>
           <div class="auth-error"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
         <form method="post">
-          <label class="auth-label" for="username">Username</label>
+          <label class="auth-label" for="username"><?php echo t("label_username"); ?></label>
           <input class="auth-input" id="username" name="username" type="text" autocomplete="username" required>
-          <label class="auth-label" for="password">Password</label>
+          <label class="auth-label" for="password"><?php echo t("label_password"); ?></label>
           <input class="auth-input" id="password" name="password" type="password" autocomplete="current-password" required>
-          <button class="btn primary auth-button" type="submit">Login</button>
+          <button class="btn primary auth-button" type="submit"><?php echo t("login_button"); ?></button>
         </form>
       </div>
     </div>

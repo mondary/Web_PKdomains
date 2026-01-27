@@ -12,6 +12,10 @@ function get_db(array $config): PDO {
             password_hash TEXT NOT NULL,
             created_at TEXT NOT NULL
         );
+        CREATE TABLE IF NOT EXISTS settings (
+            key TEXT PRIMARY KEY,
+            value TEXT NOT NULL
+        );
         CREATE TABLE IF NOT EXISTS domains (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             domain TEXT NOT NULL UNIQUE,
@@ -43,4 +47,46 @@ function get_db(array $config): PDO {
     }
 
     return $db;
+}
+
+function apply_settings(PDO $db, array $config): array {
+    $defaults = [
+        "site_name" => $config["site_name"],
+        "email_to" => $config["email_to"],
+        "email_from" => $config["email_from"],
+        "mail_subject_prefix" => $config["mail_subject_prefix"],
+        "alert_days" => $config["alert_days"],
+        "language" => $config["language"] ?? "fr",
+    ];
+
+    $rows = $db->query("SELECT key, value FROM settings")->fetchAll();
+    $settings = [];
+    foreach ($rows as $row) {
+        $settings[$row["key"]] = $row["value"];
+    }
+
+    foreach ($defaults as $key => $value) {
+        if (!array_key_exists($key, $settings)) {
+            $stmt = $db->prepare("INSERT OR IGNORE INTO settings (key, value) VALUES (:k, :v)");
+            $stmt->execute([
+                ":k" => $key,
+                ":v" => $key === "alert_days" ? json_encode($value) : (string)$value,
+            ]);
+            $settings[$key] = $key === "alert_days" ? json_encode($value) : (string)$value;
+        }
+    }
+
+    $config["site_name"] = $settings["site_name"] ?? $config["site_name"];
+    $config["email_to"] = $settings["email_to"] ?? $config["email_to"];
+    $config["email_from"] = $settings["email_from"] ?? $config["email_from"];
+    $config["mail_subject_prefix"] = $settings["mail_subject_prefix"] ?? $config["mail_subject_prefix"];
+    $config["language"] = $settings["language"] ?? ($config["language"] ?? "fr");
+    if (!empty($settings["alert_days"])) {
+        $decoded = json_decode($settings["alert_days"], true);
+        if (is_array($decoded)) {
+            $config["alert_days"] = array_values(array_map("intval", $decoded));
+        }
+    }
+
+    return $config;
 }

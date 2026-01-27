@@ -42,6 +42,8 @@ body {
   color: var(--muted);
   font-size: 14px;
 }
+.nav a { color: var(--muted); text-decoration: none; }
+.nav a:hover { color: var(--text); }
 .nav .active { color: var(--text); font-weight: 600; }
 .spacer { flex: 1; }
 .badge {
@@ -58,6 +60,19 @@ body {
   margin-right: 8px;
 }
 .link:hover { text-decoration: underline; }
+.topbar-action {
+  color: var(--text);
+  font-size: 12px;
+  text-decoration: none;
+  background: #eef2f6;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.topbar-action:hover {
+  background: #e5e9f0;
+}
 .link.danger {
   color: var(--danger);
   background: none;

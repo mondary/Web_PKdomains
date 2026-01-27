@@ -21,24 +21,25 @@ if (autofillBtn) {
 
   autofillBtn.addEventListener("click", async () => {
     const domain = drawerDomainEl ? drawerDomainEl.value.trim() : (domainEl ? domainEl.value.trim() : "");
+    const i18n = window.I18N || {};
     if (!domain) {
-      if (statusEl) statusEl.textContent = "Enter a domain first.";
+      if (statusEl) statusEl.textContent = i18n.autofill_enter_domain || "Enter a domain first.";
       return;
     }
     autofillBtn.disabled = true;
-    if (statusEl) statusEl.textContent = "Looking up RDAP...";
+    if (statusEl) statusEl.textContent = i18n.autofill_lookup || "Looking up RDAP...";
     try {
       const res = await fetch(`rdap.php?domain=${encodeURIComponent(domain)}`);
       const data = await res.json();
       if (data.ok) {
         if (registrarEl && data.registrar) registrarEl.value = data.registrar;
         if (expiresEl && data.expiration) expiresEl.value = data.expiration;
-        if (statusEl) statusEl.textContent = "Auto-fill done.";
+        if (statusEl) statusEl.textContent = i18n.autofill_done || "Auto-fill done.";
       } else {
-        if (statusEl) statusEl.textContent = data.error || "Auto-fill failed.";
+        if (statusEl) statusEl.textContent = data.error || i18n.autofill_failed || "Auto-fill failed.";
       }
     } catch (e) {
-      if (statusEl) statusEl.textContent = "Auto-fill failed.";
+      if (statusEl) statusEl.textContent = i18n.autofill_failed || "Auto-fill failed.";
     } finally {
       autofillBtn.disabled = false;
     }
@@ -47,6 +48,7 @@ if (autofillBtn) {
 
 const drawer = document.querySelector("[data-drawer]");
 const drawerBackdrop = document.querySelector("[data-drawer-backdrop]");
+const settingsDrawer = document.querySelector("[data-settings-drawer]");
 const drawerTitle = document.querySelector("[data-drawer-title]");
 const drawerClose = document.querySelector("[data-drawer-close]");
 const form = drawer ? drawer.querySelector("form") : null;
@@ -77,6 +79,18 @@ const closeDrawer = () => {
   drawerBackdrop.classList.remove("open");
 };
 
+const openSettings = () => {
+  if (!settingsDrawer || !drawerBackdrop) return;
+  settingsDrawer.classList.add("open");
+  drawerBackdrop.classList.add("open");
+};
+
+const closeSettings = () => {
+  if (!settingsDrawer || !drawerBackdrop) return;
+  settingsDrawer.classList.remove("open");
+  drawerBackdrop.classList.remove("open");
+};
+
 document.querySelectorAll("[data-drawer-open]").forEach((btn) => {
   btn.addEventListener("click", () => {
     const mode = btn.getAttribute("data-drawer-open");
@@ -99,5 +113,13 @@ if (drawerClose) {
   drawerClose.addEventListener("click", closeDrawer);
 }
 if (drawerBackdrop) {
-  drawerBackdrop.addEventListener("click", closeDrawer);
+  drawerBackdrop.addEventListener("click", () => {
+    closeDrawer();
+    closeSettings();
+  });
 }
+
+const settingsOpen = document.querySelector("[data-settings-open]");
+const settingsClose = document.querySelector("[data-settings-close]");
+if (settingsOpen) settingsOpen.addEventListener("click", openSettings);
+if (settingsClose) settingsClose.addEventListener("click", closeSettings);
