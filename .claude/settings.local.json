@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(file:*)",
+      "Bash(find:*)",
+      "Bash(curl:*)"
+    ]
+  }
+}

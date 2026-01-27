@@ -127,6 +127,13 @@ body {
   border: 1px solid var(--line);
   margin-right: 0;
 }
+.favicon {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  background: #fff;
+}
 .registrar-logo {
   width: 18px;
   height: 18px;
@@ -373,8 +380,9 @@ tbody tr {
   font-weight: 600;
 }
 .pill.ok { background: #ecfdf5; color: var(--ok); }
-.pill.warn { background: #fffbeb; color: var(--warn); }
+.pill.warn { background: #fff7ed; color: #f97316; }
 .pill.danger { background: #fef2f2; color: var(--danger); }
+.pill.unknown { background: #fef9c3; color: #a16207; }
 
 .footer {
   margin-top: 18px;

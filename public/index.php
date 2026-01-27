@@ -28,7 +28,7 @@ function days_until($date) {
 }
 
 function status_class($days) {
-    if ($days === null) return "warn";
+    if ($days === null) return "unknown";
     if ($days <= 7) return "danger";
     if ($days <= 30) return "warn";
     return "ok";
@@ -129,8 +129,12 @@ foreach ($domains as $d) {
                 <td class="domain-cell <?php echo $is_visible("domain") ? "" : "col-hidden"; ?>" data-col="domain">
                   <?php $domain = htmlspecialchars($d["domain"] ?? ""); ?>
                   <?php $thumb = cache_site_thumbnail($d["domain"] ?? ""); ?>
+                  <?php $favicon = cache_favicon($d["domain"] ?? ""); ?>
                   <?php if ($thumb): ?>
                     <img class="thumb" src="<?php echo htmlspecialchars($thumb); ?>" alt="">
+                  <?php endif; ?>
+                  <?php if ($favicon): ?>
+                    <img class="favicon" src="<?php echo htmlspecialchars($favicon); ?>" alt="">
                   <?php endif; ?>
                   <a class="link" href="https://<?php echo $domain; ?>" target="_blank" rel="noopener noreferrer"><?php echo $domain; ?></a>
                 </td>

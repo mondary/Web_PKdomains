@@ -67,6 +67,7 @@ try {
     }
     if ($domain !== "") {
         cache_site_thumbnail($domain);
+        cache_favicon($domain);
     }
 } catch (PDOException $e) {
     // Silent fail: return to list
