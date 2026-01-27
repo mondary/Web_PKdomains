@@ -1,5 +1,5 @@
 <?php
-$config = require __DIR__ . "/../config.php";
+$config = require __DIR__ . "/config.php";
 require_once __DIR__ . "/app/lib/db.php";
 require_once __DIR__ . "/app/lib/i18n.php";
 require_once __DIR__ . "/app/lib/users.php";
@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     } else {
         try {
             create_user($db, $username, $password);
-            header("Location: login.php");
+            header("Location: /public/login.php");
             exit;
         } catch (Exception $e) {
             $error = t("register_failed");
@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?php echo htmlspecialchars($config["site_name"]); ?> - <?php echo t("register_title"); ?></title>
-    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="/public/assets/style.css">
   </head>
   <body>
     <div class="container">
@@ -55,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
           <button class="btn primary auth-button" type="submit"><?php echo t("register_button"); ?></button>
         </form>
         <div class="auth-links">
-          <a class="link" href="login.php"><?php echo t("login_button"); ?></a>
+          <a class="link" href="/public/login.php"><?php echo t("login_button"); ?></a>
         </div>
       </div>
     </div>

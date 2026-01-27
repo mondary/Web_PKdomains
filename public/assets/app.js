@@ -83,7 +83,7 @@ const refreshThumbs = () => {
     const now = Date.now();
     if (now - last < 24 * 60 * 60 * 1000) return;
     localStorage.setItem(key, String(now));
-    fetch(`thumb.php?domain=${encodeURIComponent(domain)}`)
+    fetch(`/public/thumb.php?domain=${encodeURIComponent(domain)}`)
       .then((r) => r.json())
       .then((data) => {
         if (data && data.ok && data.url) {
@@ -182,7 +182,7 @@ const deleteRow = (row) => {
   if (!confirm((window.I18N && window.I18N.delete_confirm) || "Delete this domain?")) return;
   const form = document.createElement("form");
   form.method = "post";
-  form.action = "delete.php";
+  form.action = "/public/delete.php";
   const input = document.createElement("input");
   input.type = "hidden";
   input.name = "domain";
@@ -220,7 +220,7 @@ if (autofillBtn) {
     autofillBtn.disabled = true;
     if (statusEl) statusEl.textContent = i18n.autofill_lookup || "Looking up RDAP...";
     try {
-      const res = await fetch(`rdap.php?domain=${encodeURIComponent(domain)}`);
+      const res = await fetch(`/public/rdap.php?domain=${encodeURIComponent(domain)}`);
       const data = await res.json();
       if (data.ok) {
         if (registrarEl && data.registrar) registrarEl.value = data.registrar;

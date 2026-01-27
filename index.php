@@ -1,13 +1,18 @@
 <?php
-$config = require __DIR__ . "/../config.php";
-require_once __DIR__ . "/app/lib/auth.php";
-require_once __DIR__ . "/app/lib/db.php";
-require_once __DIR__ . "/app/lib/i18n.php";
-require_once __DIR__ . "/app/lib/logos.php";
-require_once __DIR__ . "/app/lib/thumbs.php";
-require_once __DIR__ . "/app/lib/users.php";
+$config = require __DIR__ . "/public/config.php";
+require_once __DIR__ . "/public/app/lib/i18n.php";
 date_default_timezone_set($config["timezone"]);
-require_login($config);
+
+session_start();
+if (!isset($_SESSION["user_id"])) {
+    require __DIR__ . "/public/demo.php";
+    exit;
+}
+
+require_once __DIR__ . "/public/app/lib/db.php";
+require_once __DIR__ . "/public/app/lib/logos.php";
+require_once __DIR__ . "/public/app/lib/thumbs.php";
+require_once __DIR__ . "/public/app/lib/users.php";
 
 $db = get_db($config);
 $uid = (int)($_SESSION["user_id"] ?? 0);
@@ -69,20 +74,20 @@ foreach ($domains as $d) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?php echo htmlspecialchars($config["site_name"]); ?></title>
-    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="/public/assets/style.css">
   </head>
   <body>
     <div class="topbar">
       <div class="topbar-inner">
         <div class="brand"><?php echo htmlspecialchars($config["site_name"]); ?></div>
         <div class="nav"></div>
-        <div class="spacer"></div>
         <form class="domain-garden-search" action="https://domain.garden/" method="get" target="_blank" rel="noopener noreferrer">
           <img src="https://domain.garden/favicon.ico" alt="" class="domain-garden-logo" referrerpolicy="no-referrer">
           <input class="domain-garden-input" type="search" name="q" placeholder="<?php echo t("search_domains"); ?>">
         </form>
+        <div class="spacer"></div>
         <button class="topbar-action" type="button" data-settings-open><?php echo t("options"); ?></button>
-        <a class="topbar-action" href="logout.php"><?php echo t("logout"); ?></a>
+        <a class="topbar-action" href="/public/logout.php"><?php echo t("logout"); ?></a>
         
       </div>
     </div>
@@ -208,7 +213,7 @@ foreach ($domains as $d) {
         <div class="drawer-title" data-drawer-title><?php echo t("drawer_add_title"); ?></div>
         <button class="topbar-action" type="button" data-drawer-close><?php echo t("close"); ?></button>
       </div>
-      <form method="post" action="save.php" class="drawer-body">
+      <form method="post" action="/public/save.php" class="drawer-body">
         <input type="hidden" name="original_domain" value="">
         <label class="auth-label" for="d-domain"><?php echo t("label_domain"); ?></label>
         <input class="auth-input" id="d-domain" name="domain" type="text" required>
@@ -230,7 +235,7 @@ foreach ($domains as $d) {
         <input class="auth-input" id="d-email" name="email" type="email">
         <button class="btn primary auth-button" type="submit"><?php echo t("save"); ?></button>
       </form>
-      <form method="post" action="delete.php" class="drawer-footer">
+      <form method="post" action="/public/delete.php" class="drawer-footer">
         <input type="hidden" name="domain" value="">
         <button class="link danger" type="submit" onclick="return confirm('<?php echo t("delete_confirm"); ?>');"><?php echo t("delete_domain"); ?></button>
       </form>
@@ -240,7 +245,7 @@ foreach ($domains as $d) {
         <div class="drawer-title"><?php echo t("options_title"); ?></div>
         <button class="topbar-action" type="button" data-settings-close><?php echo t("close"); ?></button>
       </div>
-      <form method="post" action="settings.php" class="drawer-section">
+      <form method="post" action="/public/settings.php" class="drawer-section">
         <label class="auth-label" for="s-email-to"><?php echo t("label_email_to"); ?></label>
         <input class="auth-input" id="s-email-to" name="email_to" type="email" value="<?php echo htmlspecialchars($config["email_to"]); ?>">
         <label class="auth-label" for="s-email-from"><?php echo t("label_email_from"); ?></label>
@@ -266,7 +271,7 @@ foreach ($domains as $d) {
         <input class="auth-input" id="s-days" name="alert_days" type="text" value="<?php echo htmlspecialchars(implode(", ", $config["alert_days"])); ?>">
         <button class="btn primary auth-button" type="submit"><?php echo t("save_options"); ?></button>
       </form>
-      <form method="post" action="password.php" class="drawer-section account-section">
+      <form method="post" action="/public/password.php" class="drawer-section account-section">
         <div class="auth-title"><?php echo t("account_title"); ?></div>
         <label class="auth-label" for="p-username"><?php echo t("label_new_username"); ?></label>
         <input class="auth-input" id="p-username" name="new_username" type="text" autocomplete="username" placeholder="<?php echo htmlspecialchars($_SESSION["username"] ?? ""); ?>">
@@ -278,7 +283,7 @@ foreach ($domains as $d) {
         <input class="auth-input" id="p-confirm" name="password_confirm" type="password" autocomplete="new-password" required>
         <button class="btn primary auth-button" type="submit"><?php echo t("save"); ?></button>
       </form>
-      <form method="post" action="delete_account.php" class="drawer-section account-section">
+      <form method="post" action="/public/delete_account.php" class="drawer-section account-section">
         <div class="auth-title"><?php echo t("delete_account_title"); ?></div>
         <label class="auth-label" for="da-current"><?php echo t("label_current_password"); ?></label>
         <input class="auth-input" id="da-current" name="current_password" type="password" autocomplete="current-password" required>
@@ -310,6 +315,6 @@ foreach ($domains as $d) {
       <button class="topbar-action" type="button" data-shortcuts-close><?php echo t("close"); ?></button>
     </div>
     <div class="version">v<?php echo htmlspecialchars($config["version"] ?? ""); ?></div>
-    <script src="assets/app.js"></script>
+    <script src="/public/assets/app.js"></script>
   </body>
 </html>

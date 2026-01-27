@@ -1,5 +1,5 @@
 <?php
-$config = require __DIR__ . "/../config.php";
+$config = require __DIR__ . "/config.php";
 require_once __DIR__ . "/app/lib/auth.php";
 require_once __DIR__ . "/app/lib/rdap.php";
 date_default_timezone_set($config["timezone"]);

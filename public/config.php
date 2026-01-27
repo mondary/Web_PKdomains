@@ -7,7 +7,7 @@ return [
     "email_to" => "you@example.com",
     "email_from" => "domains@yourdomain.tld",
     "mail_subject_prefix" => "[Domain Alerts] ",
-    "db_path" => __DIR__ . "/data/app.sqlite",
+    "db_path" => __DIR__ . "/../data/app.sqlite",
     "version" => "1.9.4",
     "default_username" => "admin",
     "default_password" => "admin123",

@@ -13,5 +13,10 @@ RedirectMatch 404 ^/(data|secrets)/
   Require all denied
 </FilesMatch>
 
+# Block access to config
+<Files "config.php">
+  Require all denied
+</Files>
+
 # Block access to internal app code
 RedirectMatch 404 ^/app/
