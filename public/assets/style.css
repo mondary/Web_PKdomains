@@ -545,6 +545,31 @@ tbody tr {
 @media (max-width: 900px) {
   .controls { grid-template-columns: 1fr; }
   .nav { display: none; }
-  .table-card { overflow-x: auto; }
-  table { font-size: 13px; min-width: 900px; }
+  thead { display: none; }
+  table, tbody, tr, td { display: block; width: 100%; }
+  tbody tr {
+    height: auto;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  tbody td {
+    border-bottom: none;
+    padding: 6px 0;
+  }
+  tbody td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .domain-cell {
+    padding: 6px 0;
+    height: auto;
+  }
+  .domain-media {
+    width: auto;
+    flex: 0 0 auto;
+  }
+  .actions { margin-top: 6px; }
 }

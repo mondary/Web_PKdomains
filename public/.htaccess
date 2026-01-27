@@ -12,3 +12,6 @@ RedirectMatch 404 ^/(data|secrets)/
 <FilesMatch "\.(sqlite|db|json)$">
   Require all denied
 </FilesMatch>
+
+# Block access to internal app code
+RedirectMatch 404 ^/app/

@@ -1,8 +1,8 @@
 <?php
 $config = require __DIR__ . "/../config.php";
-require_once __DIR__ . "/../app/lib/db.php";
-require_once __DIR__ . "/../app/lib/i18n.php";
-require_once __DIR__ . "/../app/lib/users.php";
+require_once __DIR__ . "/app/lib/db.php";
+require_once __DIR__ . "/app/lib/i18n.php";
+require_once __DIR__ . "/app/lib/users.php";
 date_default_timezone_set($config["timezone"]);
 
 $db = get_db($config);

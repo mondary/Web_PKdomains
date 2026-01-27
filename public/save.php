@@ -1,10 +1,10 @@
 <?php
 $config = require __DIR__ . "/../config.php";
-require_once __DIR__ . "/../app/lib/auth.php";
-require_once __DIR__ . "/../app/lib/db.php";
-require_once __DIR__ . "/../app/lib/rdap.php";
-require_once __DIR__ . "/../app/lib/logos.php";
-require_once __DIR__ . "/../app/lib/thumbs.php";
+require_once __DIR__ . "/app/lib/auth.php";
+require_once __DIR__ . "/app/lib/db.php";
+require_once __DIR__ . "/app/lib/rdap.php";
+require_once __DIR__ . "/app/lib/logos.php";
+require_once __DIR__ . "/app/lib/thumbs.php";
 date_default_timezone_set($config["timezone"]);
 require_login($config);
 

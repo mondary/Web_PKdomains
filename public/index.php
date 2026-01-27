@@ -1,11 +1,11 @@
 <?php
 $config = require __DIR__ . "/../config.php";
-require_once __DIR__ . "/../app/lib/auth.php";
-require_once __DIR__ . "/../app/lib/db.php";
-require_once __DIR__ . "/../app/lib/i18n.php";
-require_once __DIR__ . "/../app/lib/logos.php";
-require_once __DIR__ . "/../app/lib/thumbs.php";
-require_once __DIR__ . "/../app/lib/users.php";
+require_once __DIR__ . "/app/lib/auth.php";
+require_once __DIR__ . "/app/lib/db.php";
+require_once __DIR__ . "/app/lib/i18n.php";
+require_once __DIR__ . "/app/lib/logos.php";
+require_once __DIR__ . "/app/lib/thumbs.php";
+require_once __DIR__ . "/app/lib/users.php";
 date_default_timezone_set($config["timezone"]);
 require_login($config);
 
@@ -134,7 +134,7 @@ foreach ($domains as $d) {
                   data-status="<?php echo htmlspecialchars($d["status"] ?? ""); ?>"
                   data-email="<?php echo htmlspecialchars($d["email"] ?? ""); ?>"
               >
-                <td class="domain-cell <?php echo $is_visible("domain") ? "" : "col-hidden"; ?>" data-col="domain">
+                <td class="domain-cell <?php echo $is_visible("domain") ? "" : "col-hidden"; ?>" data-col="domain" data-label="<?php echo t("table_domain"); ?>">
                   <?php $domain = htmlspecialchars($d["domain"] ?? ""); ?>
                   <?php $thumb = get_cached_thumbnail($d["domain"] ?? ""); ?>
                   <?php $favicon = cache_favicon($d["domain"] ?? ""); ?>
@@ -152,7 +152,7 @@ foreach ($domains as $d) {
                   </span>
                   <a class="link" href="https://<?php echo $domain; ?>" target="_blank" rel="noopener noreferrer"><?php echo $domain; ?></a>
                 </td>
-                <td class="<?php echo $is_visible("registrar") ? "" : "col-hidden"; ?>" data-col="registrar">
+                <td class="<?php echo $is_visible("registrar") ? "" : "col-hidden"; ?>" data-col="registrar" data-label="<?php echo t("table_registrar"); ?>">
                   <div class="registrar">
                     <?php $logo = registrar_logo_url($d["registrar"] ?? ""); ?>
                     <?php $cached_logo = cache_registrar_logo($d["registrar"] ?? ""); ?>
@@ -168,9 +168,9 @@ foreach ($domains as $d) {
                     <?php endif; ?>
                   </div>
                 </td>
-                <td class="<?php echo $is_visible("expiration") ? "" : "col-hidden"; ?>" data-col="expiration"><?php echo htmlspecialchars($d["expires"] ?? ""); ?></td>
-                <td class="<?php echo $is_visible("days") ? "" : "col-hidden"; ?>" data-col="days"><?php echo $days === null ? "—" : $days; ?></td>
-                <td class="<?php echo $is_visible("status") ? "" : "col-hidden"; ?>" data-col="status"><span class="pill <?php echo status_class($days); ?>">
+                <td class="<?php echo $is_visible("expiration") ? "" : "col-hidden"; ?>" data-col="expiration" data-label="<?php echo t("table_expiration"); ?>"><?php echo htmlspecialchars($d["expires"] ?? ""); ?></td>
+                <td class="<?php echo $is_visible("days") ? "" : "col-hidden"; ?>" data-col="days" data-label="<?php echo t("table_days_left"); ?>"><?php echo $days === null ? "—" : $days; ?></td>
+                <td class="<?php echo $is_visible("status") ? "" : "col-hidden"; ?>" data-col="status" data-label="<?php echo t("table_status"); ?>"><span class="pill <?php echo status_class($days); ?>">
                   <?php
                     if ($days === null) echo t("status_unknown");
                     elseif ($days <= 7) echo t("status_critical");
@@ -178,9 +178,9 @@ foreach ($domains as $d) {
                     else echo t("status_ok");
                   ?>
                 </span></td>
-                <td class="muted <?php echo $is_visible("email") ? "" : "col-hidden"; ?>" data-col="email"><?php echo htmlspecialchars(($d["email"] ?? "") ?: $config["email_to"]); ?></td>
-                <td class="muted <?php echo $is_visible("project") ? "" : "col-hidden"; ?>" data-col="project"><?php echo htmlspecialchars($d["project"] ?? ""); ?></td>
-                <td class="actions">
+                <td class="muted <?php echo $is_visible("email") ? "" : "col-hidden"; ?>" data-col="email" data-label="<?php echo t("table_email"); ?>"><?php echo htmlspecialchars(($d["email"] ?? "") ?: $config["email_to"]); ?></td>
+                <td class="muted <?php echo $is_visible("project") ? "" : "col-hidden"; ?>" data-col="project" data-label="<?php echo t("table_project"); ?>"><?php echo htmlspecialchars($d["project"] ?? ""); ?></td>
+                <td class="actions" data-label="<?php echo t("edit"); ?>">
                   <button class="icon-button" type="button"
                     data-drawer-open="edit"
                     data-domain="<?php echo htmlspecialchars($d["domain"] ?? ""); ?>"
