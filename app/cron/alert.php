@@ -1,16 +1,10 @@
 <?php
-$config = require __DIR__ . "/config.php";
+$config = require __DIR__ . "/../../config.php";
+require_once __DIR__ . "/../lib/db.php";
 date_default_timezone_set($config["timezone"]);
 
-$domains = [];
-if (is_file($config["data_domains"])) {
-    $domains = json_decode(file_get_contents($config["data_domains"]), true) ?: [];
-}
-
-$notifications = [];
-if (is_file($config["data_notifications"])) {
-    $notifications = json_decode(file_get_contents($config["data_notifications"]), true) ?: [];
-}
+$db = get_db($config);
+$domains = $db->query("SELECT id, domain, expires, email FROM domains")->fetchAll();
 
 function days_until($date) {
     $today = new DateTime("today");
@@ -42,21 +36,21 @@ foreach ($domains as $d) {
         continue;
     }
 
-    $key = $domain . ":" . $days;
-    $already = $notifications[$key]["date"] ?? null;
-    if ($already === $today) {
+    $stmt = $db->prepare("SELECT id FROM notifications WHERE domain_id = :id AND days = :days AND date = :date");
+    $stmt->execute([":id" => $d["id"], ":days" => $days, ":date" => $today]);
+    if ($stmt->fetchColumn()) {
         continue;
     }
 
-    $to = $d["email"] ?? $config["email_to"];
+    $to = ($d["email"] ?? "") ?: $config["email_to"];
     $subject = $config["mail_subject_prefix"] . $domain . " expires in " . $days . " day(s)";
     $message = "Domain: {$domain}\nExpires: {$expires}\nDays left: {$days}\n";
 
     if (send_alert($to, $config["email_from"], $subject, $message)) {
-        $notifications[$key] = ["date" => $today];
+        $ins = $db->prepare("INSERT OR IGNORE INTO notifications (domain_id, days, date) VALUES (:id, :days, :date)");
+        $ins->execute([":id" => $d["id"], ":days" => $days, ":date" => $today]);
         $sent++;
     }
 }
 
-file_put_contents($config["data_notifications"], json_encode($notifications, JSON_PRETTY_PRINT));
 echo "Alerts sent: {$sent}\n";
