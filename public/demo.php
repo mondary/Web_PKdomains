@@ -86,13 +86,17 @@ foreach ($domains as $d) {
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?php echo htmlspecialchars($config["site_name"]); ?> - Démo</title>
+    <title>PK domain manager</title>
     <link rel="stylesheet" href="<?php echo htmlspecialchars(url_for($config, "public/assets/style.css")); ?>">
   </head>
   <body>
+    <div class="watermark" style="background-image:url('<?php echo htmlspecialchars(url_for($config, "icon.png")); ?>');"></div>
     <div class="topbar">
       <div class="topbar-inner">
-        <div class="brand"><?php echo htmlspecialchars($config["site_name"]); ?></div>
+        <div class="brand">
+          <img class="brand-logo" src="<?php echo htmlspecialchars(url_for($config, "icon.png")); ?>" alt="">
+          <span><?php echo htmlspecialchars($config["site_name"]); ?></span>
+        </div>
         <div class="spacer"></div>
         <button class="topbar-action" type="button" data-login-open>Se connecter</button>
       </div>

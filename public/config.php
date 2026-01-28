@@ -6,11 +6,11 @@ $config = [
     "language" => "fr",
     "email_to" => "",
     "email_from" => "",
-    "mail_subject_prefix" => "",
+    "mail_subject_prefix" => "[PK Domain Alerts] ",
     "db_path" => __DIR__ . "/../data/app.sqlite",
-    "version" => "2.0.0",
-    "default_username" => "admin",
-    "default_password" => "admin123",
+    "version" => "2.0.1",
+    "default_username" => "",
+    "default_password" => "",
     "base_url" => "",
     "smtp_host" => "",
     "smtp_port" => 587,
@@ -19,7 +19,7 @@ $config = [
     "smtp_secure" => "starttls",
 ];
 
-$cred = __DIR__ . "/../data/credentials.php";
+$cred = __DIR__ . "/../data/secrets/credentials.php";
 if (is_file($cred)) {
     $extra = require $cred;
     if (is_array($extra)) {

@@ -19,6 +19,23 @@ body {
   background: radial-gradient(1200px 700px at 10% 0%, #eef2ff 0%, #f6f7fb 55%, #f6f7fb 100%);
   color: var(--text);
 }
+body > * {
+  position: relative;
+  z-index: 1;
+}
+.watermark {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  width: 160px;
+  height: 160px;
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: contain;
+  opacity: 0.12;
+  pointer-events: none;
+  z-index: 0;
+}
 
 .topbar {
   background: #fff;
@@ -39,6 +56,16 @@ body {
 .brand {
   font-weight: 700;
   letter-spacing: 0.2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  object-fit: cover;
 }
 .nav {
   display: flex;

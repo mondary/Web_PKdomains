@@ -9,23 +9,17 @@ Now uses SQLite for authentication and data.
 - `public/app/`: application logic (lib + cron)
 - `public/config.php`: configuration (tracked)
 - `data/app.sqlite`: database (users, domains, notifications)
-- `data/credentials.php`: secrets (ignored by git)
+- `data/secrets/credentials.php`: secrets (ignored by git)
 
 ## Setup
 1) Edit `public/config.php` (timezone, DB path, etc.).
-2) Create `data/credentials.php` (see below).
+2) Create `data/secrets/credentials.php` (see below).
 3) Upload everything to your OVH FTP.
 4) Ensure `data/` is writable by PHP.
 5) Open the site in browser.
 
-Default login (change after first login):
-```
-username: admin
-password: admin123
-```
-
 ## Credentials (required)
-Create `data/credentials.php` with at least these keys:
+Create `data/secrets/credentials.php` with at least these keys:
 ```php
 <?php
 return [
@@ -35,6 +29,8 @@ return [
   "smtp_user" => "domains@yourdomain.tld",
   "smtp_pass" => "YOUR_PASSWORD",
   "smtp_secure" => "starttls",
+  "default_username" => "admin",
+  "default_password" => "admin123",
 ];
 ```
 

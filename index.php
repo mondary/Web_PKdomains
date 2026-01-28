@@ -78,9 +78,13 @@ foreach ($domains as $d) {
     <link rel="stylesheet" href="<?php echo htmlspecialchars(url_for($config, "public/assets/style.css")); ?>">
   </head>
   <body>
+    <div class="watermark" style="background-image:url('<?php echo htmlspecialchars(url_for($config, "icon.png")); ?>');"></div>
     <div class="topbar">
       <div class="topbar-inner">
-        <div class="brand"><?php echo htmlspecialchars($config["site_name"]); ?></div>
+        <div class="brand">
+          <img class="brand-logo" src="<?php echo htmlspecialchars(url_for($config, "icon.png")); ?>" alt="">
+          <span><?php echo htmlspecialchars($config["site_name"]); ?></span>
+        </div>
         <div class="nav"></div>
         <form class="domain-garden-search" action="https://domain.garden/" method="get" target="_blank" rel="noopener noreferrer">
           <img src="https://domain.garden/favicon.ico" alt="" class="domain-garden-logo" referrerpolicy="no-referrer">

@@ -110,16 +110,7 @@ function get_db(array $config): PDO {
         $db->exec("ALTER TABLE settings_new RENAME TO settings");
     }
 
-    $count = (int)$db->query("SELECT COUNT(*) AS c FROM users")->fetchColumn();
-    if ($count === 0) {
-        $hash = password_hash($config["default_password"], PASSWORD_BCRYPT);
-        $stmt = $db->prepare("INSERT INTO users (username, password_hash, created_at) VALUES (:u, :p, :c)");
-        $stmt->execute([
-            ":u" => $config["default_username"],
-            ":p" => $hash,
-            ":c" => (new DateTime())->format("Y-m-d H:i:s"),
-        ]);
-    }
+    // No default admin user creation.
 
     return $db;
 }
