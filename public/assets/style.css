@@ -682,7 +682,7 @@ tbody tr {
     height: auto;
     padding: 16px;
     border-bottom: none;
-    background: transparent;
+    background: #fff;
     border: 1px solid var(--line);
     border-radius: 14px;
     overflow: hidden;
