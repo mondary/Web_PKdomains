@@ -2,9 +2,10 @@
 $config = require __DIR__ . "/public/config.php";
 require_once __DIR__ . "/public/app/lib/url.php";
 require_once __DIR__ . "/public/app/lib/i18n.php";
+require_once __DIR__ . "/public/app/lib/session.php";
 date_default_timezone_set($config["timezone"]);
 
-session_start();
+secure_session_start();
 if (!isset($_SESSION["user_id"])) {
     require __DIR__ . "/public/demo.php";
     exit;

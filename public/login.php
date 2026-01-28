@@ -3,9 +3,10 @@ $config = require __DIR__ . "/config.php";
 require_once __DIR__ . "/app/lib/url.php";
 require_once __DIR__ . "/app/lib/db.php";
 require_once __DIR__ . "/app/lib/i18n.php";
+require_once __DIR__ . "/app/lib/session.php";
 date_default_timezone_set($config["timezone"]);
 
-session_start();
+secure_session_start();
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     header("Location: " . url_for($config, "index.php"));
     exit;
