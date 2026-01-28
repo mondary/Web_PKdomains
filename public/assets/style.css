@@ -26,7 +26,17 @@ body > * {
   z-index: 1;
 }
 .watermark {
-  display: none;
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  width: 140px;
+  height: 140px;
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: contain;
+  opacity: 0.06;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .topbar {
@@ -1357,7 +1367,9 @@ tbody tr:hover {
 }
 
 [data-theme="classic"] .watermark {
-  display: block;
+  opacity: 0.12;
+  width: 160px;
+  height: 160px;
 }
 
 [data-theme="classic"] .topbar-action {
