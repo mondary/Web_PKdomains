@@ -75,7 +75,7 @@ foreach ($domains as $d) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?php echo htmlspecialchars($config["site_name"]); ?></title>
-    <link rel="stylesheet" href="<?php echo htmlspecialchars(url_for($config, "public/assets/style.css")); ?>">
+    <link rel="stylesheet" href="<?php echo htmlspecialchars(url_for($config, "public/assets/style.css")); ?>?v=<?php echo urlencode($config["version"] ?? ""); ?>">
   </head>
   <body>
     <div class="watermark" style="background-image:url('<?php echo htmlspecialchars(url_for($config, "icon.png")); ?>');"></div>
@@ -86,6 +86,7 @@ foreach ($domains as $d) {
           <span><?php echo htmlspecialchars($config["site_name"]); ?></span>
         </div>
         <div class="nav"></div>
+        <button class="burger" type="button" aria-label="Menu" data-burger-open>☰</button>
         <form class="domain-garden-search" action="https://domain.garden/" method="get" target="_blank" rel="noopener noreferrer">
           <img src="https://domain.garden/favicon.ico" alt="" class="domain-garden-logo" referrerpolicy="no-referrer">
           <input class="domain-garden-input" type="search" name="q" placeholder="<?php echo t("search_domains"); ?>">
@@ -93,7 +94,11 @@ foreach ($domains as $d) {
         <div class="spacer"></div>
         <button class="topbar-action" type="button" data-settings-open><?php echo t("options"); ?></button>
         <a class="topbar-action" href="<?php echo htmlspecialchars(url_for($config, "public/logout.php")); ?>"><?php echo t("logout"); ?></a>
-        
+        <div class="topbar-menu" data-burger-menu>
+          <a class="topbar-menu-item" href="https://domain.garden/" target="_blank" rel="noopener noreferrer"><?php echo t("search_domains"); ?></a>
+          <button class="topbar-menu-item" type="button" data-settings-open><?php echo t("options"); ?></button>
+          <a class="topbar-menu-item danger" href="<?php echo htmlspecialchars(url_for($config, "public/logout.php")); ?>"><?php echo t("logout"); ?></a>
+        </div>
       </div>
     </div>
 
@@ -154,13 +159,25 @@ foreach ($domains as $d) {
                   <?php else: ?>
                     <span class="thumb placeholder" data-thumb-missing="1"></span>
                   <?php endif; ?>
+                  </span>
+                  <?php
+                    $reg_logo = registrar_logo_url($d["registrar"] ?? "");
+                    $reg_cached = cache_registrar_logo($d["registrar"] ?? "");
+                  ?>
+                  <span class="domain-title">
                     <?php if ($favicon): ?>
                       <img class="favicon" src="<?php echo htmlspecialchars($favicon); ?>" alt="">
                     <?php else: ?>
                       <span class="favicon placeholder"></span>
                     <?php endif; ?>
+                    <a class="link" href="https://<?php echo $domain; ?>" target="_blank" rel="noopener noreferrer"><?php echo $domain; ?></a>
+                    <span class="domain-registrar">
+                      <?php if ($reg_logo || $reg_cached): ?>
+                        <img class="registrar-logo" src="<?php echo htmlspecialchars($reg_cached ?: $reg_logo); ?>" alt="" referrerpolicy="no-referrer">
+                      <?php endif; ?>
+                      <?php echo htmlspecialchars($d["registrar"] ?? ""); ?>
+                    </span>
                   </span>
-                  <a class="link" href="https://<?php echo $domain; ?>" target="_blank" rel="noopener noreferrer"><?php echo $domain; ?></a>
                 </td>
                 <td class="<?php echo $is_visible("registrar") ? "" : "col-hidden"; ?>" data-col="registrar" data-label="<?php echo t("table_registrar"); ?>">
                   <div class="registrar">
@@ -211,7 +228,6 @@ foreach ($domains as $d) {
 
       
     </div>
-    <div class="toast" data-expiring-toast><?php echo t("expiring_badge", ["count" => $expiring, "threshold" => 30]); ?></div>
     <div class="drawer-backdrop" data-drawer-backdrop></div>
     <div class="drawer" data-drawer>
       <div class="drawer-header">
@@ -321,6 +337,6 @@ foreach ($domains as $d) {
     </div>
     <div class="version">v<?php echo htmlspecialchars($config["version"] ?? ""); ?></div>
     <script>window.BASE_URL = "<?php echo htmlspecialchars(base_url($config)); ?>";</script>
-    <script src="<?php echo htmlspecialchars(url_for($config, "public/assets/app.js")); ?>"></script>
+    <script src="<?php echo htmlspecialchars(url_for($config, "public/assets/app.js")); ?>?v=<?php echo urlencode($config["version"] ?? ""); ?>"></script>
   </body>
 </html>

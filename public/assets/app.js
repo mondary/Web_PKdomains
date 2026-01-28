@@ -377,6 +377,14 @@ const settingsClose = document.querySelector("[data-settings-close]");
 if (settingsOpen) settingsOpen.addEventListener("click", openSettings);
 if (settingsClose) settingsClose.addEventListener("click", closeSettings);
 
+const burgerOpen = document.querySelector("[data-burger-open]");
+const burgerMenu = document.querySelector("[data-burger-menu]");
+if (burgerOpen && burgerMenu) {
+  burgerOpen.addEventListener("click", () => {
+    burgerMenu.classList.toggle("open");
+  });
+}
+
 const testMailBtn = document.querySelector("[data-test-mail]");
 const testMailStatus = document.querySelector("[data-test-mail-status]");
 if (testMailBtn) {

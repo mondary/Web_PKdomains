@@ -87,7 +87,7 @@ foreach ($domains as $d) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>PK domain manager</title>
-    <link rel="stylesheet" href="<?php echo htmlspecialchars(url_for($config, "public/assets/style.css")); ?>">
+    <link rel="stylesheet" href="<?php echo htmlspecialchars(url_for($config, "public/assets/style.css")); ?>?v=<?php echo urlencode($config["version"] ?? ""); ?>">
   </head>
   <body>
     <div class="watermark" style="background-image:url('<?php echo htmlspecialchars(url_for($config, "icon.png")); ?>');"></div>
@@ -97,8 +97,12 @@ foreach ($domains as $d) {
           <img class="brand-logo" src="<?php echo htmlspecialchars(url_for($config, "icon.png")); ?>" alt="">
           <span><?php echo htmlspecialchars($config["site_name"]); ?></span>
         </div>
+        <button class="burger" type="button" aria-label="Menu" data-burger-open>☰</button>
         <div class="spacer"></div>
         <button class="topbar-action" type="button" data-login-open>Se connecter</button>
+        <div class="topbar-menu" data-burger-menu>
+          <button class="topbar-menu-item" type="button" data-login-open>Se connecter</button>
+        </div>
       </div>
     </div>
 
@@ -147,9 +151,15 @@ foreach ($domains as $d) {
                 <td class="domain-cell <?php echo $is_visible("domain") ? "" : "col-hidden"; ?>" data-col="domain" data-label="<?php echo t("table_domain"); ?>">
                   <span class="domain-media">
                     <img class="thumb" src="<?php echo htmlspecialchars(url_for($config, $d["thumb"] ?? "public/assets/demo-thumb.svg")); ?>" alt="">
-                    <img class="favicon" src="<?php echo htmlspecialchars(url_for($config, $d["favicon"] ?? "public/assets/demo-favicon.svg")); ?>" alt="">
                   </span>
-                  <span class="link"><?php echo htmlspecialchars($d["display"] ?? ""); ?></span>
+                  <span class="domain-title">
+                    <img class="favicon" src="<?php echo htmlspecialchars(url_for($config, $d["favicon"] ?? "public/assets/demo-favicon.svg")); ?>" alt="">
+                    <span class="link"><?php echo htmlspecialchars($d["display"] ?? ""); ?></span>
+                    <span class="domain-registrar">
+                      <img class="registrar-logo" src="<?php echo htmlspecialchars(url_for($config, $d["registrar_logo"] ?? "public/assets/demo-registrar.svg")); ?>" alt="">
+                      <?php echo htmlspecialchars($d["registrar"] ?? ""); ?>
+                    </span>
+                  </span>
                 </td>
                 <td class="<?php echo $is_visible("registrar") ? "" : "col-hidden"; ?>" data-col="registrar" data-label="<?php echo t("table_registrar"); ?>">
                   <div class="registrar">
@@ -181,7 +191,6 @@ foreach ($domains as $d) {
       </div>
     </div>
 
-    <div class="toast demo-toast"><?php echo t("expiring_badge", ["count" => $expiring, "threshold" => 30]); ?></div>
 
     <div class="drawer-backdrop open" data-demo-backdrop></div>
     <div class="drawer demo-drawer open" data-demo-drawer>
