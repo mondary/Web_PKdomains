@@ -620,6 +620,59 @@ tbody tr {
 .col-hidden {
   display: none;
 }
+.drawer-section {
+  padding: 8px 10px 4px;
+}
+.drawer-section .auth-label {
+  font-size: 11px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-top: 16px;
+}
+.drawer-section .auth-input,
+.drawer-section .select {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 14px;
+}
+.drawer-section .auth-input:focus,
+.drawer-section .select:focus {
+  outline: none;
+  border-color: #cbd5f5;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+.drawer-section .auth-button,
+.drawer-section .btn {
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+.drawer-section + .drawer-section {
+  border-top: 1px solid #eef2f6;
+  margin-top: 10px;
+  padding-top: 16px;
+}
+.checkbox-grid {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+.checkbox-grid label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.drawer-title {
+  font-size: 16px;
+  letter-spacing: 0.2px;
+}
+.drawer-header {
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eef2f6;
+}
 
 @media (max-width: 1200px) {
   .container { padding: 0 20px; }
