@@ -122,6 +122,7 @@ function apply_settings(PDO $db, array $config, ?int $user_id = null): array {
         "mail_subject_prefix" => $config["mail_subject_prefix"],
         "alert_days" => $config["alert_days"],
         "language" => $config["language"] ?? "fr",
+        "theme" => $config["theme"] ?? "light",
         "columns_visible" => json_encode(["domain", "registrar", "expiration", "days", "status", "email", "project"]),
     ];
 
@@ -153,6 +154,7 @@ function apply_settings(PDO $db, array $config, ?int $user_id = null): array {
     $config["email_to"] = $settings["email_to"] ?? $config["email_to"];
     $config["mail_subject_prefix"] = $settings["mail_subject_prefix"] ?? $config["mail_subject_prefix"];
     $config["language"] = $settings["language"] ?? ($config["language"] ?? "fr");
+    $config["theme"] = $settings["theme"] ?? ($config["theme"] ?? "light");
     if (!empty($settings["alert_days"])) {
         $decoded = json_decode($settings["alert_days"], true);
         if (is_array($decoded)) {

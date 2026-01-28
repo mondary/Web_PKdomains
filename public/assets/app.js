@@ -466,3 +466,11 @@ document.addEventListener("keydown", (e) => {
     }
   }
 });
+
+// Theme switcher
+const themeSelect = document.querySelector("[data-theme-select]");
+if (themeSelect) {
+  themeSelect.addEventListener("change", () => {
+    document.body.setAttribute("data-theme", themeSelect.value);
+  });
+}

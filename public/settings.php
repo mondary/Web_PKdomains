@@ -22,6 +22,10 @@ $language = $_POST["language"] ?? ($config["language"] ?? "fr");
 if (!in_array($language, ["fr", "en"], true)) {
     $language = "fr";
 }
+$theme = $_POST["theme"] ?? ($config["theme"] ?? "light");
+if (!in_array($theme, ["light", "dark", "classic", "system"], true)) {
+    $theme = "light";
+}
 $columns_visible = $_POST["columns_visible"] ?? ["domain", "registrar", "expiration", "days", "status", "email", "project"];
 if (!is_array($columns_visible)) {
     $columns_visible = ["domain", "registrar", "expiration", "days", "status", "email", "project"];
@@ -44,6 +48,7 @@ $updates = [
     "mail_subject_prefix" => $mail_subject_prefix,
     "alert_days" => json_encode(array_values($days)),
     "language" => $language,
+    "theme" => $theme,
     "columns_visible" => json_encode(array_values($columns_visible)),
 ];
 

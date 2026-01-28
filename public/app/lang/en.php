@@ -91,4 +91,9 @@ return [
     "shortcut_delete" => "Delete row",
     "filter_all" => "All",
     "search_domains" => "Domain search",
+    "label_theme" => "Theme",
+    "theme_light" => "Minimal light",
+    "theme_dark" => "Minimal dark",
+    "theme_classic" => "Classic (blue)",
+    "theme_system" => "System",
 ];

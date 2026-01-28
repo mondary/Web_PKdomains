@@ -77,7 +77,7 @@ foreach ($domains as $d) {
     <title><?php echo htmlspecialchars($config["site_name"]); ?></title>
     <link rel="stylesheet" href="<?php echo htmlspecialchars(url_for($config, "public/assets/style.css")); ?>?v=<?php echo urlencode($config["version"] ?? ""); ?>">
   </head>
-  <body>
+  <body data-theme="<?php echo htmlspecialchars($config["theme"] ?? "light"); ?>">
     <div class="watermark" style="background-image:url('<?php echo htmlspecialchars(url_for($config, "icon.png")); ?>');"></div>
     <div class="topbar">
       <div class="topbar-inner">
@@ -272,12 +272,20 @@ foreach ($domains as $d) {
         <input class="auth-input" id="s-email-to" name="email_to" type="email" value="<?php echo htmlspecialchars($config["email_to"]); ?>">
         <label class="auth-label" for="s-prefix"><?php echo t("label_prefix"); ?></label>
         <input class="auth-input" id="s-prefix" name="mail_subject_prefix" type="text" value="<?php echo htmlspecialchars($config["mail_subject_prefix"]); ?>">
+        <div class="field-spacer"></div>
         <button class="btn" type="button" data-test-mail>Tester email</button>
         <div class="auth-hint" data-test-mail-status></div>
         <label class="auth-label" for="s-lang"><?php echo t("label_language"); ?></label>
         <select class="select" id="s-lang" name="language">
-          <option value="fr" <?php echo ($config["language"] ?? "fr") === "fr" ? "selected" : ""; ?>>FR 🇫🇷</option>
-          <option value="en" <?php echo ($config["language"] ?? "fr") === "en" ? "selected" : ""; ?>>EN 🇺🇸</option>
+          <option value="fr" <?php echo ($config["language"] ?? "fr") === "fr" ? "selected" : ""; ?>>FR</option>
+          <option value="en" <?php echo ($config["language"] ?? "fr") === "en" ? "selected" : ""; ?>>EN</option>
+        </select>
+        <label class="auth-label" for="s-theme"><?php echo t("label_theme"); ?></label>
+        <select class="select" id="s-theme" name="theme" data-theme-select>
+          <option value="light" <?php echo ($config["theme"] ?? "light") === "light" ? "selected" : ""; ?>><?php echo t("theme_light"); ?></option>
+          <option value="dark" <?php echo ($config["theme"] ?? "light") === "dark" ? "selected" : ""; ?>><?php echo t("theme_dark"); ?></option>
+          <option value="classic" <?php echo ($config["theme"] ?? "light") === "classic" ? "selected" : ""; ?>><?php echo t("theme_classic"); ?></option>
+          <option value="system" <?php echo ($config["theme"] ?? "light") === "system" ? "selected" : ""; ?>><?php echo t("theme_system"); ?></option>
         </select>
         <label class="auth-label"><?php echo t("label_columns"); ?></label>
         <div class="checkbox-grid">

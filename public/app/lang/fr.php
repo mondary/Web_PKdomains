@@ -91,4 +91,9 @@ return [
     "shortcut_delete" => "Supprimer la ligne",
     "filter_all" => "Tous",
     "search_domains" => "Acheter un domaine",
+    "label_theme" => "Thème",
+    "theme_light" => "Minimaliste clair",
+    "theme_dark" => "Minimaliste sombre",
+    "theme_classic" => "Classique (bleu)",
+    "theme_system" => "Système",
 ];
