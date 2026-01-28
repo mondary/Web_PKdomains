@@ -155,10 +155,10 @@ foreach ($domains as $d) {
                   <span class="domain-title">
                     <img class="favicon" src="<?php echo htmlspecialchars(url_for($config, $d["favicon"] ?? "public/assets/demo-favicon.svg")); ?>" alt="">
                     <span class="link"><?php echo htmlspecialchars($d["display"] ?? ""); ?></span>
-                    <span class="domain-registrar">
-                      <img class="registrar-logo" src="<?php echo htmlspecialchars(url_for($config, $d["registrar_logo"] ?? "public/assets/demo-registrar.svg")); ?>" alt="">
-                      <?php echo htmlspecialchars($d["registrar"] ?? ""); ?>
-                    </span>
+                  </span>
+                  <span class="domain-registrar-line">
+                    <img class="registrar-logo" src="<?php echo htmlspecialchars(url_for($config, $d["registrar_logo"] ?? "public/assets/demo-registrar.svg")); ?>" alt="">
+                    <span><?php echo htmlspecialchars($d["registrar"] ?? ""); ?></span>
                   </span>
                 </td>
                 <td class="<?php echo $is_visible("registrar") ? "" : "col-hidden"; ?>" data-col="registrar" data-label="<?php echo t("table_registrar"); ?>">
@@ -182,6 +182,7 @@ foreach ($domains as $d) {
                 <td class="actions" data-label="<?php echo t("edit"); ?>">
                   <button class="icon-button" type="button" data-login-open title="Se connecter" aria-label="Se connecter">
                     <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" aria-hidden="true" focusable="false"><path d="M416.9 85.2L372 130.1L509.9 268L554.8 223.1C568.4 209.6 576 191.2 576 172C576 152.8 568.4 134.4 554.8 120.9L519.1 85.2C505.6 71.6 487.2 64 468 64C448.8 64 430.4 71.6 416.9 85.2zM338.1 164L122.9 379.1C112.2 389.8 104.4 403.2 100.3 417.8L64.9 545.6C62.6 553.9 64.9 562.9 71.1 569C77.3 575.1 86.2 577.5 94.5 575.2L222.3 539.7C236.9 535.6 250.2 527.9 261 517.1L476 301.9L338.1 164z"/></svg>
+                    <span class="edit-label">Éditer</span>
                   </button>
                 </td>
               </tr>

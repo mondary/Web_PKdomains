@@ -353,6 +353,7 @@ kbd {
   max-width: 1200px;
   margin: 24px auto 60px;
   padding: 0 24px;
+  background: transparent;
 }
 .demo-note {
   background: #fff7ed;
@@ -495,6 +496,19 @@ tbody tr {
   align-items: center;
   gap: 8px;
   min-width: 0;
+}
+.domain-registrar-line {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.edit-label {
+  display: none;
+  margin-left: 8px;
+  font-size: 14px;
+  font-weight: 600;
 }
 .domain-registrar {
   display: none;
@@ -664,9 +678,9 @@ tbody tr {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     column-gap: 12px;
-    row-gap: 2px;
+    row-gap: 14px;
     height: auto;
-    padding: 12px;
+    padding: 16px;
     border-bottom: none;
     background: transparent;
     border: 1px solid var(--line);
@@ -678,7 +692,9 @@ tbody tr {
     display: block;
     width: 100%;
     border-bottom: none;
-    padding: 6px 0;
+    padding: 10px 0;
+    font-size: 14px;
+    line-height: 1.4;
   }
   tbody td::before {
     content: attr(data-label);
@@ -686,6 +702,8 @@ tbody tr {
     font-size: 11px;
     color: var(--muted);
     margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
   }
   tbody td[data-col="domain"] { grid-column: 1 / -1; }
   tbody td[data-col="registrar"] { grid-column: 1 / -1; }
@@ -694,18 +712,16 @@ tbody tr {
   tbody td[data-col="status"] { grid-column: 3; }
   tbody td[data-col="email"] { grid-column: 1; }
   tbody td[data-col="project"] { grid-column: 2; }
-  tbody td.actions { grid-column: 3; display: flex; justify-content: flex-end; align-items: center; }
+  tbody td.actions { grid-column: 1 / -1; display: flex; justify-content: center; align-items: center; }
   tbody td[data-col="expiration"]::before,
   tbody td[data-col="days"]::before,
   tbody td[data-col="status"]::before { margin-bottom: 2px; }
   tbody td[data-col="domain"]::before {
     display: none;
   }
-  tbody td[data-col="email"]::before,
-  tbody td[data-col="project"]::before,
-  tbody td.actions::before {
-    display: none;
-  }
+  tbody td[data-col="email"],
+  tbody td[data-col="project"] { display: none; }
+  tbody td.actions::before { display: none; }
   tbody td[data-col="registrar"] {
     display: none;
   }
@@ -717,13 +733,13 @@ tbody tr {
     height: auto;
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
+    gap: 12px;
   }
   .domain-media {
-    width: calc(100% + 24px);
+    width: calc(100% + 32px);
     flex: 0 0 auto;
     justify-content: space-between;
-    margin: -12px -12px 0;
+    margin: -16px -16px 0;
   }
   .domain-media .thumb {
     width: 100%;
@@ -733,24 +749,52 @@ tbody tr {
     object-fit: cover;
     object-position: top;
   }
-  tbody td {
-    padding: 8px 12px;
-  }
   tbody td[data-col="domain"] {
     padding: 0;
   }
   .domain-title {
     width: 100%;
+    font-size: 16px;
+    font-weight: 700;
+    gap: 10px;
+  }
+  .domain-registrar-line {
+    display: inline-flex;
   }
   .domain-registrar {
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
   }
-  .domain-registrar {
-    display: inline-flex;
+  .domain-registrar .registrar-logo {
+    width: 16px;
+    height: 16px;
+  }
+  .pill {
+    font-size: 12px;
+    padding: 6px 10px;
   }
   .actions { margin-top: 6px; }
+  .actions .icon-button {
+    width: 100%;
+    height: 44px;
+    border-radius: 12px;
+    justify-content: center;
+    gap: 8px;
+    background: #f1f5f9;
+  }
+  .edit-label {
+    display: inline-flex;
+  }
+
+  .table-card {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
 }
 
 @media (max-width: 720px) {
@@ -813,8 +857,3 @@ tbody tr {
 @media (max-width: 900px) {
   .burger { display: inline-flex !important; }
 }
-  .table-card {
-    background: transparent;
-    border: none;
-    box-shadow: none;
-  }
